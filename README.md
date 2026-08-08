@@ -133,6 +133,7 @@ proyecto_aplicacion_y_servicios_web/
 │   │                            #   una carpeta de specs por versión (v1, v2, …)
 │   ├── GUIA_IA.md               # Cómo reconstruir la versión desde 0 con ayuda de una IA
 │   ├── FLUJO_DE_UNA_PETICION.md # Dónde "está" el GET, dónde se captura el POST
+│   ├── TUTORIAL_SSMS.md         # Administrar la BD con SQL Server Management Studio
 │   ├── PARADIGMA_POO.md         # Material conceptual: POO, SOLID+capas, ACID,
 │   ├── SOLID_Y_CAPAS.md         #   Docker y SDD (un .md por tema)
 │   ├── PRINCIPIOS_ACID.md       #
