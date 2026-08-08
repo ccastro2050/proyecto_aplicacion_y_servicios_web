@@ -60,7 +60,7 @@ frontend Blazor (v6) **sin reescribir lo construido**.
 - **Modelo entidad** (`Producto`): la clase con las 4 propiedades tipadas
   (en C#, las propiedades `{ get; set; }` SON los getters/setters del
   lenguaje).
-- **Un modelo por verbo como frontera de entrada** (`ProductoCrear`,
+- **Una petición por verbo como frontera de entrada** (`ProductoCrear`,
   `ProductoReemplazo`, `ProductoActualizar`): declaran sus reglas con
   anotaciones (`[Required]`, `[Range]`, `[StringLength]`) y ASP.NET valida
   el body contra ellas → **422 con lista de errores** antes de tocar el
@@ -99,20 +99,20 @@ frontend Blazor (v6) **sin reescribir lo construido**.
 `GET /api/producto/{codigo}` → 200 con el producto; inexistente → 404.
 
 ### RF3 — Crear producto (POST + body)
-`POST /api/producto` con body validado por el modelo **ProductoCrear**
+`POST /api/producto` con body validado por la petición **ProductoCrear**
 (`codigo` 1–10 caracteres, `nombre` no vacío, `stock` entero ≥ 0,
 `valorunitario` numérico ≥ 0 — todos obligatorios).
 Éxito → 200 `{estado, mensaje}`; body inválido → **422 con la lista de
 errores**; código duplicado → 500 con el error del motor en `detalle`.
 
 ### RF4 — Reemplazar producto (PUT + body completo)
-`PUT /api/producto/{codigo}` con body del modelo **ProductoReemplazo**:
+`PUT /api/producto/{codigo}` con body de la petición **ProductoReemplazo**:
 **todos los campos obligatorios** (`nombre`, `stock`, `valorunitario`) —
 PUT reemplaza el recurso completo; omitir un campo es 422, no "dejarlo como
 estaba". Devuelve `filasAfectadas`; código inexistente → 404.
 
 ### RF5 — Actualizar parcialmente (PATCH + body parcial)
-`PATCH /api/producto/{codigo}` con body del modelo **ProductoActualizar**:
+`PATCH /api/producto/{codigo}` con body de la petición **ProductoActualizar**:
 **campos opcionales** — solo se modifican los enviados (cada uno validado
 si llega). Es el contraste didáctico con PUT. Devuelve `filasAfectadas`;
 inexistente → 404; body vacío → 400.
@@ -156,9 +156,9 @@ inexistente → 404.
    lo elimina, y un segundo `DELETE` responde 404. Además, un `PUT` sin el
    campo `nombre` responde 422 (reemplazo completo) mientras el mismo body
    en `PATCH` responde 200 (parcial) — la diferencia entre ambos verbos.
-5. La validación del modelo es la frontera: `POST` con `stock: -5` o sin
+5. La validación de la petición es la frontera: `POST` con `stock: -5` o sin
    `nombre` → 422 con `errores:[…]`; `POST` con `stock: 7.5` o `"texto"` →
-   422 (**el tipo también es regla**: el modelo declara `int?`); código
+   422 (**el tipo también es regla**: la petición declara `int?`); código
    duplicado → 500 con el error del motor en `detalle`.
 6. **Prueba de capas:** `dotnet run --project pruebas` (o vía
    `docker compose exec`) ejecuta el servicio con un repositorio FALSO en

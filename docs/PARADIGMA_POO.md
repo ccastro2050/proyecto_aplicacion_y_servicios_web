@@ -55,7 +55,46 @@ Quedarse con lo esencial y esconder el detalle. Las **interfaces**
 QUÉ se puede hacer sin una línea de CÓMO. El controlador depende de la
 abstracción, no del detalle.
 
-## 3. Ideas de P.O.O. que C# trae "de fábrica" (y la v1 usa)
+## 3. ¿Qué es un modelo? (y qué son las peticiones)
+
+> **Un modelo es la clase ENTIDAD: representa un dato del dominio — una
+> fila de una tabla — con sus campos y tipos.** En este proyecto los
+> modelos viven en `Modelos/`; en la v1 hay uno: `Producto`.
+
+Pero a una API también le LLEGAN datos: el body del POST, del PUT y del
+PATCH. Esos body también se describen con clases — y NO son modelos,
+porque no representan una entidad del dominio sino **lo que el cliente
+envía en UN verbo concreto**. Esas clases son las **PETICIONES** y viven
+en `Peticiones/`:
+
+| | Modelo (`Modelos/`) | Petición (`Peticiones/`) |
+|---|---|---|
+| Qué describe | El dato **como ES adentro** (la fila de la tabla) | El dato **como LLEGA de afuera** (el body de un verbo) |
+| En la v1 | `Producto` | `ProductoCrear`, `ProductoReemplazo`, `ProductoActualizar` |
+| Qué lleva | Los campos con sus tipos | Los campos con sus tipos **+ las reglas de entrada** (`[Required]`, `[Range]`…) |
+| Cuántas hay | UNA por tabla | Una por verbo (cada verbo exige cosas distintas) |
+
+**Analogía:** en un aeropuerto, su **pasaporte** dice quién ES usted (el
+modelo) y el **formulario de inmigración** dice qué declara usted AL
+ENTRAR — y el oficial lo revisa contra sus reglas (la petición). Los dos
+son "documentos con campos"; cada uno tiene su momento.
+
+**En muchos proyectos profesionales los dos papeles los hace UNA sola
+clase:** la entidad se anota (`[Required]`, `[MaxLength]`…) y entra
+directo por `[FromBody]` en POST y PUT — entidad y petición fusionadas.
+Ese estilo es válido y común, y funciona perfecto **cuando todos los
+verbos reciben el recurso completo**.
+
+**¿Por qué la v1 las separa?** Porque su lección central es la SEMÁNTICA
+de los verbos: PUT exige el recurso completo (`[Required]` en todo) y
+PATCH acepta parcial (nada obligatorio) — y una sola clase no puede
+declarar "todo obligatorio" y "todo opcional" a la vez. Separar la
+petición por verbo deja la diferencia **escrita en código**: el mismo
+body `{"stock": 99}` muere en 422 contra `ProductoReemplazo` y pasa
+contra `ProductoActualizar`. Cuando todos los verbos comparten forma, la
+petición puede volver a fusionarse con el modelo en una sola clase.
+
+## 4. Ideas de P.O.O. que C# trae "de fábrica" (y la v1 usa)
 
 - **Tipos estrictos**: `int Stock` rechaza texto; `decimal` para dinero
   (exacto, sin errores de redondeo de los float).
@@ -64,12 +103,12 @@ abstracción, no del detalle.
 - **Inyección de dependencias integrada**: el "ensamblador" de Program.cs
   (los `AddScoped`) entrega las implementaciones concretas a quien pida la
   interfaz por constructor. Composición sobre herencia.
-- **El modelo declara y el framework valida**: los modelos por verbo
+- **La petición declara y el framework valida**: las peticiones por verbo
   (`ProductoCrear`, `ProductoReemplazo`, `ProductoActualizar`) llevan sus
   reglas como ANOTACIONES (`[Required]`, `[Range]`) — objetos que se
   autodescriben, y ASP.NET hace cumplir la descripción (el 422).
 
-## 4. Justificación: por qué P.O.O. para este proyecto
+## 5. Justificación: por qué P.O.O. para este proyecto
 
 1. **El dominio se modela solo:** producto, factura, cliente… son objetos
    naturales con datos y reglas propias.
@@ -83,11 +122,11 @@ abstracción, no del detalle.
    ([SOLID_Y_CAPAS.md](SOLID_Y_CAPAS.md)) son reglas de diseño **dentro**
    del paradigma orientado a objetos — sin P.O.O. no hay SOLID que aplicar.
 
-## 5. Ejemplo resumido: la v1 vista con lentes de P.O.O.
+## 6. Ejemplo resumido: la v1 vista con lentes de P.O.O.
 
 ```
 Producto (el modelo)             ← la clase entidad: el dato con tipos
-ProductoCrear / Reemplazo / Actualizar ← la frontera: declaran reglas por verbo
+ProductoCrear / Reemplazo / Actualizar ← las PETICIONES: reglas por verbo (la frontera)
 ProductoController               ← objeto HTTP; compone un IServicioProducto
 ServicioProducto                 ← objeto de NEGOCIO; compone un IRepositorioProducto
 IRepositorioProducto             ← contrato (interface): abstracción pura
@@ -96,7 +135,7 @@ RepositorioFalsoEnMemoria        ← otra implementación (¡polimorfismo!) para
 NoEncontradoExcepcion            ← herencia: una Exception con nombre propio
 ```
 
-## 6. Referencias
+## 7. Referencias
 
 1. Microsoft — *Object-Oriented programming (C#)*:
    <https://learn.microsoft.com/dotnet/csharp/fundamentals/tutorials/oop>

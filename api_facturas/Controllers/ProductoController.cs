@@ -2,7 +2,7 @@
 // ProductoController — la capa HTTP de la v1.
 //
 // Su único trabajo: recibir la petición (ASP.NET ya validó el
-// body contra el MODELO del verbo → 422 automático), delegar al
+// body contra la PETICIÓN del verbo → 422 automático), delegar al
 // servicio, y responder JSON con el código correcto.
 // Aquí NO hay SQL ni reglas de negocio.
 //
@@ -15,7 +15,7 @@
 //
 // Traducción a códigos HTTP (contrato de 6_contracts.md §0):
 //   Body con errores de forma → 422 (lo arma Program.cs con la
-//                                    lista de errores del modelo)
+//                                    lista de errores de la petición)
 //   ArgumentException         → 400 (regla de negocio)
 //   NoEncontradoExcepcion     → 404
 //   SqlException y demás      → 500 (mensaje del motor en detalle)
@@ -23,13 +23,14 @@
 
 using ApiFacturas.Excepciones;
 using ApiFacturas.Modelos;
+using ApiFacturas.Peticiones;
 using ApiFacturas.Servicios;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiFacturas.Controllers;
 
 // [ApiController] activa la validación automática del body contra el
-// modelo (el 422) y el enlace de parámetros.
+// body contra su petición (el 422) y el enlace de parámetros.
 // [Route("api/producto")] = TODAS las rutas de esta clase cuelgan de ahí.
 [ApiController]
 [Route("api/producto")]
@@ -119,7 +120,7 @@ public class ProductoController : ControllerBase
     // POST /api/producto  →  crear (body completo, con código)
     // ------------------------------------------------------------
     // [FromBody] ProductoCrear body = ASP.NET toma el JSON, lo vuelca en
-    // el MODELO del verbo y lo VALIDA contra sus anotaciones. Si algo no
+    // la PETICIÓN del verbo y lo VALIDA contra sus anotaciones. Si algo no
     // cumple, este método NI SE EJECUTA: Program.cs ya respondió 422 con
     // la lista de errores. Aquí solo entra data limpia.
     [HttpPost]
@@ -151,16 +152,16 @@ public class ProductoController : ControllerBase
     // ------------------------------------------------------------
     // PUT /api/producto/{codigo}  →  reemplazo COMPLETO
     // ------------------------------------------------------------
-    // El modelo ProductoReemplazo exige TODOS los campos: un PUT con
+    // La petición ProductoReemplazo exige TODOS los campos: un PUT con
     // body parcial muere en 422 ANTES de llegar aquí — esa es la
-    // semántica de PUT, escrita en el modelo.
+    // semántica de PUT, escrita en la petición.
     [HttpPut("{codigo}")]
     public async Task<IActionResult> Reemplazar(string codigo, [FromBody] ProductoReemplazo body)
     {
         try
         {
             // Armar el diccionario columna→valor con los 3 campos (en
-            // PUT siempre vienen los 3 — el modelo lo garantizó):
+            // PUT siempre vienen los 3 — la petición lo garantizó):
             var datos = new Dictionary<string, object>
             {
                 ["nombre"] = body.Nombre!,
@@ -190,14 +191,14 @@ public class ProductoController : ControllerBase
     // ------------------------------------------------------------
     // ProductoActualizar no exige campos: valida SOLO los que llegaron.
     // El MISMO body {"stock": 99} que en PUT da 422, aquí pasa — la
-    // diferencia entre PUT y PATCH queda escrita en los modelos.
+    // diferencia entre PUT y PATCH queda escrita en las peticiones.
     [HttpPatch("{codigo}")]
     public async Task<IActionResult> Actualizar(string codigo, [FromBody] ProductoActualizar body)
     {
         try
         {
             // Armar el diccionario SOLO con lo que vino (lo que quedó
-            // null en el modelo = no fue enviado). Esta es la lista
+            // null en la petición = no fue enviado). Esta es la lista
             // blanca: solo estas 3 columnas pueden viajar al SQL.
             var datos = new Dictionary<string, object>();
             if (body.Nombre != null) { datos["nombre"] = body.Nombre; }

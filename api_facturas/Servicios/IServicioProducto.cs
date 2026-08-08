@@ -21,7 +21,7 @@ public interface IServicioProducto
     /// <summary>El Producto con ese código. NoEncontradoExcepcion si no existe.</summary>
     Task<Producto> ObtenerAsync(string codigo);
 
-    /// <summary>Crea el producto (el body ya fue validado por el modelo
+    /// <summary>Crea el producto (el body ya fue validado por la petición
     /// ProductoCrear; el servicio construye la entidad).</summary>
     Task CrearAsync(Producto producto);
 

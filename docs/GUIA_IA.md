@@ -81,14 +81,14 @@ en un **proyecto propio, en una carpeta nueva y vacía**:
    integrada (*Terminal → New Terminal*, PowerShell), parado en su carpeta:
 
    ```powershell
-   mkdir docs\spec_kit\versiones\v1_producto_sqlserver, db, api_facturas\Modelos, api_facturas\Controllers, api_facturas\Servicios, api_facturas\Repositorios, api_facturas\Excepciones, api_facturas\pruebas
+   mkdir docs\spec_kit\versiones\v1_producto_sqlserver, db, api_facturas\Modelos, api_facturas\Peticiones, api_facturas\Controllers, api_facturas\Servicios, api_facturas\Repositorios, api_facturas\Excepciones, api_facturas\pruebas
    ```
 
 4. **Cree los ARCHIVOS VACÍOS** — **USTED los irá llenando** uno a uno,
    pegando en cada archivo el código que la IA le entregue:
 
    ```powershell
-   New-Item docker-compose.yml, api_facturas\ApiFacturas.csproj, api_facturas\Program.cs, api_facturas\appsettings.json, api_facturas\Dockerfile, api_facturas\Modelos\Producto.cs, api_facturas\Modelos\ProductoCrear.cs, api_facturas\Modelos\ProductoReemplazo.cs, api_facturas\Modelos\ProductoActualizar.cs, api_facturas\Controllers\ProductoController.cs, api_facturas\Servicios\IServicioProducto.cs, api_facturas\Servicios\ServicioProducto.cs, api_facturas\Repositorios\IRepositorioProducto.cs, api_facturas\Repositorios\RepositorioProductoSqlServer.cs, api_facturas\Excepciones\NoEncontradoExcepcion.cs, api_facturas\pruebas\PruebaCapas.csproj, api_facturas\pruebas\Programa.cs
+   New-Item docker-compose.yml, api_facturas\ApiFacturas.csproj, api_facturas\Program.cs, api_facturas\appsettings.json, api_facturas\Dockerfile, api_facturas\Modelos\Producto.cs, api_facturas\Peticiones\ProductoCrear.cs, api_facturas\Peticiones\ProductoReemplazo.cs, api_facturas\Peticiones\ProductoActualizar.cs, api_facturas\Controllers\ProductoController.cs, api_facturas\Servicios\IServicioProducto.cs, api_facturas\Servicios\ServicioProducto.cs, api_facturas\Repositorios\IRepositorioProducto.cs, api_facturas\Repositorios\RepositorioProductoSqlServer.cs, api_facturas\Excepciones\NoEncontradoExcepcion.cs, api_facturas\pruebas\PruebaCapas.csproj, api_facturas\pruebas\Programa.cs
    ```
 
    (`db/bdfacturas.sql` y `db/init.sh` NO están en la lista a propósito:
@@ -134,8 +134,9 @@ mi_v1_producto/                   ← SU carpeta
     ├── Program.cs                ← Fase 5
     ├── Dockerfile                ← Fase 6
     ├── Modelos/
-    │   ├── Producto.cs           ← Fase 1 (la entidad)
-    │   ├── ProductoCrear.cs      ← Fase 2 (la frontera, un modelo por verbo)
+    │   └── Producto.cs           ← Fase 1 (el modelo = la entidad)
+    ├── Peticiones/
+    │   ├── ProductoCrear.cs      ← Fase 2 (la frontera, una petición por verbo)
     │   ├── ProductoReemplazo.cs  ← Fase 2
     │   └── ProductoActualizar.cs ← Fase 2
     ├── Controllers/

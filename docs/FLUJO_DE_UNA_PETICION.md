@@ -42,7 +42,7 @@ pero la declara usted con **atributos** y la ejecuta el framework:
 | `[Route("api/producto")]` | `ProductoController.cs` | "Todas mis rutas cuelgan de /api/producto" |
 | `[HttpGet]`, `[HttpPost]`, `[HttpPut("{codigo}")]`… | encima de cada método | **AQUÍ está el verbo**: este método atiende ESE verbo en ESA ruta |
 | `[FromQuery] int limite = 1000` | parámetros del método | Captura el query string (?limite=3) ya convertido a int |
-| `[FromBody] ProductoCrear body` | parámetros del método | Captura el BODY: toma el JSON, lo vuelca en el modelo del verbo y lo VALIDA |
+| `[FromBody] ProductoCrear body` | parámetros del método | Captura el BODY: toma el JSON, lo vuelca en la PETICIÓN del verbo y lo VALIDA |
 
 Cuando llega `GET /api/producto`, el enrutador compara el verbo y la ruta
 de la petición contra los atributos de todos los controladores, encuentra
@@ -57,8 +57,8 @@ solo que aquí la hace el framework y usted la declara con el atributo.
 ```
 1. ASP.NET routing     compara verbo+ruta contra los atributos
                        → elige ProductoController.Crear()
-2. Model binding       toma el JSON del body y lo vuelca en ProductoCrear
-3. Validación          revisa las anotaciones del modelo ([Required], [Range]…)
+2. Model binding       toma el JSON del body y lo vuelca en la petición ProductoCrear
+3. Validación          revisa las anotaciones de la petición ([Required], [Range]…)
       ├─ ¿errores? → Program.cs responde 422 con la lista y AQUÍ TERMINA
       │              (el método Crear NI SE EJECUTA)
       └─ ¿limpio? → entra a Crear(body)
@@ -75,7 +75,7 @@ método del controller, que la traduce a un código HTTP:
 
 | Qué pasó | Excepción | Código |
 |---|---|---|
-| El body venía mal formado | (no es excepción: la validación del modelo) | **422** |
+| El body venía mal formado | (no es excepción: la validación de la petición) | **422** |
 | Regla de negocio rota (límite ≤ 0, PATCH sin campos) | `ArgumentException` | **400** |
 | El código no existe en la tabla | `NoEncontradoExcepcion` | **404** |
 | La BD rechazó (código duplicado, conexión caída…) | `SqlException` u otra | **500** |
@@ -119,4 +119,4 @@ Invoke-RestMethod -Method Delete -Uri "http://localhost:8032/api/producto/PR009"
 
 La pareja PUT/PATCH con el mismo body es la lección más importante del
 flujo: el MISMO dato, dos verbos, dos resultados — porque cada verbo tiene
-su semántica y los MODELOS del verbo la hacen cumplir.
+su semántica y las PETICIONES del verbo la hacen cumplir.

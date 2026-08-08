@@ -123,7 +123,7 @@ public class RepositorioProductoSqlServer : IRepositorioProducto
     {
         // SET dinámico SOLO con las columnas que llegaron (PUT manda las
         // 3, PATCH un subconjunto). Los NOMBRES de columna vienen del
-        // controlador, que los sacó de los MODELOS (lista blanca) —
+        // controlador, que los sacó de las PETICIONES (lista blanca) —
         // nunca del cliente — por eso es seguro armarlos en el texto;
         // los VALORES sí van siempre como parámetros.
         var asignaciones = new List<string>();

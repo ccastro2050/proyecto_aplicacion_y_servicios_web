@@ -1,5 +1,5 @@
 // ============================================================
-// ProductoActualizar — el modelo del BODY del PATCH (parcial).
+// ProductoActualizar — la PETICIÓN del PATCH (actualización parcial).
 //
 // PATCH modifica SOLO lo que llegue: por eso aquí NINGÚN campo
 // es obligatorio (no hay [Required]) — pero el que llegue SÍ se
@@ -13,7 +13,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace ApiFacturas.Modelos;
+namespace ApiFacturas.Peticiones;
 
 public class ProductoActualizar
 {

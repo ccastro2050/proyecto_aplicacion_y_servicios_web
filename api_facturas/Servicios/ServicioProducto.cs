@@ -81,7 +81,7 @@ public class ServicioProducto : IServicioProducto
 
     public async Task CrearAsync(Producto producto)
     {
-        // El body ya pasó por el modelo ProductoCrear (tipos y rangos):
+        // El body ya pasó por la petición ProductoCrear (tipos y rangos):
         // aquí solo se delega. Si la BD rechaza (código duplicado →
         // viola la PK), la SqlException sube tal cual y el controlador
         // la convierte en 500.
@@ -91,7 +91,7 @@ public class ServicioProducto : IServicioProducto
     public async Task<int> ActualizarAsync(string codigo, Dictionary<string, object> datos)
     {
         codigo = ValidarCodigo(codigo);
-        // Un PATCH con body {} pasó la validación del modelo (nada
+        // Un PATCH con body {} pasó la validación de la petición (nada
         // inválido)… pero no tiene sentido de negocio: no hay nada que
         // actualizar → 400.
         if (datos.Count == 0)

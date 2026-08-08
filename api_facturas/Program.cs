@@ -3,7 +3,7 @@
 //
 // Aquí se arma la aplicación: se registran los servicios (el
 // ENSAMBLADOR de las capas), se configura cómo responder cuando
-// un modelo no valida (422), y se encienden las rutas.
+// una petición no valida (422), y se encienden las rutas.
 //
 // El recorrido completo de una petición está explicado en
 // docs/FLUJO_DE_UNA_PETICION.md.
@@ -40,14 +40,14 @@ builder.Services.AddScoped<IRepositorioProducto>(
 builder.Services.AddScoped<IServicioProducto, ServicioProducto>();
 
 // ------------------------------------------------------------
-// 2. Los controladores y la validación del modelo (el 422)
+// 2. Los controladores y la validación de la petición (el 422)
 // ------------------------------------------------------------
 // AddControllers activa el sistema de controladores ([ApiController]).
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(opciones =>
     {
-        // Cuando un body NO cumple las reglas del modelo (las anotaciones
-        // [Required], [Range]... de Modelos/), ASP.NET arma solo la
+        // Cuando un body NO cumple las reglas de su petición (las anotaciones
+        // [Required], [Range]... de Peticiones/), ASP.NET arma solo la
         // respuesta de error. Aquí la personalizamos para que sea un
         // 422 con la lista de errores — el formato del contrato:
         opciones.InvalidModelStateResponseFactory = contexto =>
@@ -75,7 +75,7 @@ builder.Services.AddControllers()
 // ------------------------------------------------------------
 // 2b. Swagger — la documentación interactiva de la API
 // ------------------------------------------------------------
-// Swashbuckle lee los controladores y modelos y genera una página
+// Swashbuckle lee los controladores y sus clases de datos y genera una página
 // donde se ven TODOS los endpoints y se pueden probar desde el
 // navegador (http://localhost:8032/swagger).
 builder.Services.AddEndpointsApiExplorer();   // descubre los endpoints

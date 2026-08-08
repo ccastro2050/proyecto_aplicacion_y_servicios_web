@@ -46,7 +46,7 @@ criterios medibles):
 
 ```markdown
 ### RF5 — Actualizar parcialmente (PATCH + body parcial)
-`PATCH /api/producto/{codigo}` con body del modelo ProductoActualizar:
+`PATCH /api/producto/{codigo}` con body de la petición ProductoActualizar:
 campos opcionales — solo se modifican los enviados. Devuelve
 filasAfectadas; inexistente → 404; body vacío → 400.
 

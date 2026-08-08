@@ -10,11 +10,11 @@
 
 - Lecturas con **envoltura**: `{tabla, limite, total, datos:[…]}`.
 - Errores SIEMPRE `{estado, mensaje, detalle}`; el 422 lleva además
-  `errores:[…]` (la lista de mensajes de la validación del modelo).
+  `errores:[…]` (la lista de mensajes de la validación de la petición).
 
 | Situación | HTTP |
 |---|---|
-| Body inválido según el **modelo del verbo** | **422** con `errores:[…]` |
+| Body inválido según la **petición del verbo** | **422** con `errores:[…]` |
 | Regla de negocio rota (límite ≤ 0, PATCH sin campos) | **400** |
 | El producto no existe | **404** |
 | La BD rechaza (PK duplicada) o falla | **500** (error del motor en `detalle`) |
@@ -50,7 +50,7 @@ GET /api/producto/PR999
 
 ## 4. `POST /api/producto` — Crear (body completo, con código)
 
-Body (modelo `ProductoCrear` — todos obligatorios):
+Body (petición `ProductoCrear` — todos obligatorios):
 
 ```
 POST /api/producto   body {"codigo":"PR009","nombre":"Webcam","stock":10,"valorunitario":350000}
@@ -65,12 +65,12 @@ body {"codigo":"PR001", …}                  ← código duplicado (PK)
 → 500 con el error del motor en detalle
 ```
 
-**El tipo es regla:** `stock: 7.5` o `stock: "texto"` → 422 (el modelo
+**El tipo es regla:** `stock: 7.5` o `stock: "texto"` → 422 (la petición
 declara `int?` y el valor no encaja).
 
 ## 5. `PUT /api/producto/{codigo}` — Reemplazo COMPLETO
 
-Body (modelo `ProductoReemplazo` — TODOS obligatorios; el código va en la URL):
+Body (petición `ProductoReemplazo` — TODOS obligatorios; el código va en la URL):
 
 ```
 PUT /api/producto/PR009   body {"nombre":"Webcam HD","stock":12,"valorunitario":380000}
@@ -83,7 +83,7 @@ body {"stock":99}                           ← faltan campos: PUT es TODO o 422
 
 ## 6. `PATCH /api/producto/{codigo}` — Actualización PARCIAL
 
-Body (modelo `ProductoActualizar` — todos opcionales; se escribe SOLO lo enviado):
+Body (petición `ProductoActualizar` — todos opcionales; se escribe SOLO lo enviado):
 
 ```
 PATCH /api/producto/PR009   body {"stock":99}      ← el MISMO body que arriba

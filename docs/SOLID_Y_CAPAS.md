@@ -29,7 +29,7 @@ están bien cortadas.
 ### S — Responsabilidad única (Single Responsibility)
 Cada clase tiene UNA razón para cambiar: el controller si cambia el
 protocolo HTTP; el servicio si cambian las reglas de negocio; el
-repositorio si cambia el SQL; los modelos del verbo si cambian las reglas
+repositorio si cambia el SQL; las peticiones del verbo si cambian las reglas
 de forma del body. Ninguna clase hace dos de esas cosas.
 
 ### O — Abierto/Cerrado (Open/Closed)

@@ -25,7 +25,7 @@
            para .NET (ADO.NET). Sin ORM: el SQL se escribe a mano y
            queda visible — decisión de la constitución.
          - Swashbuckle.AspNetCore: genera la documentación interactiva
-           Swagger (/swagger) leyendo los controladores y modelos. -->
+           Swagger (/swagger) leyendo los controladores y sus clases de datos. -->
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>

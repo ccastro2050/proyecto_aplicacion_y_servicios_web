@@ -54,7 +54,7 @@ public class Producto
 
 ## 3. Las dos murallas de validación
 
-1. **La API** (los modelos por verbo con anotaciones): forma, tipos y
+1. **La API** (las peticiones por verbo con anotaciones): forma, tipos y
    rangos → 422 con lista de errores, ANTES de tocar la BD.
 2. **La BD** (PK, NOT NULL, FK y triggers): la última línea de defensa —
    un código duplicado viola la PK y el motor lo rechaza aunque la API

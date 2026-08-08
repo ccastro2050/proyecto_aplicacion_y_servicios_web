@@ -29,7 +29,7 @@ stock descontado sin factura. El dinero no acepta "casi".
 **Ejemplo desde la v1:** las **llaves foráneas** de bdfacturas — `cliente`
 apunta a `persona`, `factura` apunta a `cliente`. Aunque la API validara
 mal, el motor rechaza eliminar una persona que es cliente. Es la doble
-muralla: los modelos del verbo cuidan la forma de lo que entra; las FK
+muralla: las peticiones del verbo cuidan la forma de lo que entra; las FK
 cuidan las relaciones entre tablas.
 
 ### I — Aislamiento (*Isolation*)

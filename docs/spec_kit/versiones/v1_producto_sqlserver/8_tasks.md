@@ -17,7 +17,7 @@
       `sqlserver-init` (misma imagen, monta `./db`, corre `init.sh` y
       termina) — ver [3_plan.md](3_plan.md) §5. Levantar:
       `docker compose up -d`.
-- [ ] Crear `api_facturas/` con subcarpetas `Modelos/`, `Controllers/`,
+- [ ] Crear `api_facturas/` con subcarpetas `Modelos/`, `Peticiones/`, `Controllers/`,
       `Servicios/`, `Repositorios/`, `Excepciones/` y `pruebas/`.
 
 **Verificar:** `docker compose ps -a` muestra `sqlserver (healthy)` y
@@ -36,10 +36,10 @@
 
 **Verificar:** `dotnet build` compila sin errores.
 
-## Fase 2 — Los modelos por verbo (la frontera de entrada) y la excepción
-- [ ] `Modelos/ProductoCrear.cs` (POST: todo obligatorio, con código),
-      `Modelos/ProductoReemplazo.cs` (PUT: todo obligatorio, sin código) y
-      `Modelos/ProductoActualizar.cs` (PATCH: todo opcional) — con las
+## Fase 2 — Las peticiones por verbo (la frontera de entrada) y la excepción
+- [ ] `Peticiones/ProductoCrear.cs` (POST: todo obligatorio, con código),
+      `Peticiones/ProductoReemplazo.cs` (PUT: todo obligatorio, sin código) y
+      `Peticiones/ProductoActualizar.cs` (PATCH: todo opcional) — con las
       anotaciones y mensajes de [3_plan.md](3_plan.md) §4.2.
 - [ ] `Excepciones/NoEncontradoExcepcion.cs`: la excepción que el
       controller traducirá a 404.

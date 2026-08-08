@@ -120,8 +120,9 @@ proyecto_aplicacion_y_servicios_web/
 │   ├── appsettings.json         # Cadena de conexión (default localhost,11463)
 │   ├── Dockerfile               # Imagen sdk:10.0 + dotnet watch
 │   ├── Controllers/             # Capa 1 — HTTP: atributos de verbo y try/catch → códigos
-│   ├── Modelos/                 # La entidad Producto + un modelo por verbo (la
-│   │                            #   frontera: sus anotaciones validan el body → 422)
+│   ├── Modelos/                 # Los MODELOS = las clases ENTIDAD (v1: Producto)
+│   ├── Peticiones/              # Los body por verbo (Crear/Reemplazo/Actualizar):
+│   │                            #   sus anotaciones validan la entrada → 422
 │   ├── Servicios/               # Capa 2 — negocio: interfaz + reglas
 │   ├── Repositorios/            # Capa 3 — datos: interfaz + ADO.NET/SQL Server
 │   ├── Excepciones/             # NoEncontradoExcepcion (el servicio la lanza → 404)

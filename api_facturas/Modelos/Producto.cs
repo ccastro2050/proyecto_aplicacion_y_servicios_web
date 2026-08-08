@@ -1,5 +1,9 @@
 // ============================================================
-// Producto — el MODELO (la clase entidad) de la v1.
+// Producto — el MODELO de la v1 (la clase entidad).
+//
+// REGLA del curso: modelo = clase ENTIDAD. En Modelos/ solo viven
+// entidades (una clase por tabla). Los body de los verbos NO son
+// modelos: son PETICIONES y viven en Peticiones/.
 //
 // Representa UNA fila de la tabla producto como un objeto con
 // tipos. En C#, las "propiedades" ({ get; set; }) SON los getters

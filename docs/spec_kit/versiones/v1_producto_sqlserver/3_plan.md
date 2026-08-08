@@ -12,7 +12,7 @@
 |---|---|---|
 | Lenguaje / framework | **C# sobre ASP.NET Core (.NET 10)** | El stack del curso; controladores con atributos, DI integrada, async nativo |
 | Acceso a datos | **ADO.NET** (`Microsoft.Data.SqlClient`) con SQL parametrizado | SQL visible — sin ORM que lo esconda (constitución, Art. 2) |
-| Validación | **Un modelo por verbo** con anotaciones (`[Required]`, `[Range]`…) | El framework valida el body contra el modelo y responde 422 — el modelo ES la frontera |
+| Validación | **Una petición por verbo** con anotaciones (`[Required]`, `[Range]`…) | El framework valida el body contra la petición y responde 422 — la petición ES la frontera |
 | Motor (v1) | **SQL Server 2022** (contenedor oficial) | El motor natural del ecosistema .NET; los otros llegan en v3/v4 |
 | Contenedor de la API | `mcr.microsoft.com/dotnet/sdk:10.0` + `dotnet watch` | Guardar un `.cs` recompila y reinicia solo (ciclo de desarrollo del curso) |
 
@@ -30,10 +30,11 @@
     ├── appsettings.json              # cadena de conexión (default localhost:11463)
     ├── Dockerfile                    # sdk:10.0 + dotnet watch (puerto 8032)
     ├── Modelos/
-    │   ├── Producto.cs               # la ENTIDAD: 4 propiedades tipadas { get; set; }
-    │   ├── ProductoCrear.cs          # modelo del body del POST (todo obligatorio)
-    │   ├── ProductoReemplazo.cs      # modelo del body del PUT (todo obligatorio, sin código)
-    │   └── ProductoActualizar.cs     # modelo del body del PATCH (todo opcional)
+    │   └── Producto.cs               # el MODELO = la ENTIDAD: 4 propiedades tipadas
+    ├── Peticiones/
+    │   ├── ProductoCrear.cs          # petición del POST (todo obligatorio)
+    │   ├── ProductoReemplazo.cs      # petición del PUT (todo obligatorio, sin código)
+    │   └── ProductoActualizar.cs     # petición del PATCH (todo opcional)
     ├── Controllers/
     │   └── ProductoController.cs     # HTTP: atributos de verbo, try/catch → códigos
     ├── Servicios/
@@ -53,7 +54,7 @@
 
 ```
 HTTP → ASP.NET routing        (los atributos [HttpGet]/[HttpPost]… deciden el método)
-     → validación del MODELO  (anotaciones del modelo del verbo → 422 automático)
+     → validación de la PETICIÓN (anotaciones de la petición del verbo → 422 automático)
      → ProductoController     (try/catch: traduce excepciones a códigos HTTP)
      → IServicioProducto      (interfaz — reglas de negocio)
      → IRepositorioProducto   (interfaz — el servicio no sabe qué motor hay detrás)
@@ -84,8 +85,8 @@ con `: IRepositorioProducto`. Las lecturas devuelven **objetos del modelo**;
 `ActualizarAsync` va con diccionario porque un PATCH puede traer solo
 algunos campos.
 
-### 4.2 La validación vive en los MODELOS (un modelo por verbo)
-ASP.NET valida el body contra el modelo del verbo ANTES de ejecutar el
+### 4.2 La validación vive en las PETICIONES (una por verbo)
+ASP.NET valida el body contra la petición del verbo ANTES de ejecutar el
 método del controlador — el 422 sale solo (personalizado en `Program.cs`
 para responder `{estado, mensaje, errores:[…]}`):
 
@@ -121,7 +122,7 @@ DELETE FROM producto WHERE codigo = @codigo
 - `TOP (@limite)` es el "LIMIT" del dialecto SQL Server (y acepta parámetro).
 - Conexión por operación con `await using` (se cierra sola, incluso con
   error); todo `async`.
-- El SET del UPDATE se arma solo con columnas que salen de los MODELOS
+- El SET del UPDATE se arma solo con columnas que salen de las PETICIONES
   (lista blanca), nunca con claves del cliente.
 - Detalle amable del motor: en SQL Server, las filas afectadas de un UPDATE
   cuentan las que CUMPLIERON el WHERE (aunque el valor nuevo sea igual al

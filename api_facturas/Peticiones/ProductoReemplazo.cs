@@ -1,15 +1,15 @@
 // ============================================================
-// ProductoReemplazo — el modelo del BODY del PUT (reemplazo COMPLETO).
+// ProductoReemplazo — la PETICIÓN del PUT (reemplazo COMPLETO).
 //
 // PUT reemplaza el recurso entero: por eso aquí TODOS los campos
 // son obligatorios (el código no viene — viaja en la URL). Un PUT
 // al que le falte un campo muere en 422: esa es la semántica del
-// verbo, escrita en el modelo.
+// verbo, escrita en la petición.
 // ============================================================
 
 using System.ComponentModel.DataAnnotations;
 
-namespace ApiFacturas.Modelos;
+namespace ApiFacturas.Peticiones;
 
 public class ProductoReemplazo
 {

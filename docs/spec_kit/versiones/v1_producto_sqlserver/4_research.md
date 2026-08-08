@@ -52,19 +52,22 @@ migraciones entre versiones y deja los triggers y SPs de facturación
 esperando a la v2. Costo asumido: 11 tablas a la vista que aún no se usan —
 por eso la regla se declara explícita en la spec.
 
-## D5 — La validación vive en los MODELOS (un modelo por verbo)
+## D5 — La validación vive en las PETICIONES (una por verbo)
 
 **Alternativas descartadas:** validar con ifs dentro del controlador, una
 clase validadora aparte, o no validar y dejar que la BD rechace.
-**Decisión:** tres modelos de body (`ProductoCrear`, `ProductoReemplazo`,
+**Decisión:** tres clases de PETICIÓN (`ProductoCrear`, `ProductoReemplazo`,
 `ProductoActualizar`) que DECLARAN sus reglas con anotaciones; ASP.NET
 valida y responde 422 con la lista de errores (formato personalizado en
 `Program.cs`).
-**Por qué:** es la manera idiomática del framework — el modelo declara, el
+**Por qué:** es la manera idiomática del framework — la petición declara, el
 framework hace cumplir — y materializa la semántica de cada verbo: el mismo
 body `{"stock": 7}` falla en PUT (le faltan campos) y pasa en PATCH. Bono
 didáctico: **el tipo es regla** — `stock` es `int?`, así que un `7.5` o un
 `"texto"` caen en 422 sin escribir ni un if.
+**Nota de nombre:** estas clases NO son modelos — modelo = clase entidad
+(`Modelos/`, en v1 `Producto`). Por eso viven en su propia carpeta
+`Peticiones/`: describen lo que LLEGA en cada verbo, no lo que ES.
 
 ## D6 — SQL Server como primer motor (y su inicializador)
 

@@ -1,19 +1,22 @@
 // ============================================================
-// ProductoCrear — el modelo del BODY del POST (crear producto).
+// ProductoCrear — la PETICIÓN del POST (el body para crear).
 //
-// LA FRONTERA DE ENTRADA de la API: hay UN modelo por semántica
-// HTTP (este para POST, ProductoReemplazo para PUT y
-// ProductoActualizar para PATCH), y cada uno DECLARA sus reglas
-// con anotaciones. ASP.NET valida el body contra el modelo ANTES
-// de que el controlador lo toque: si algo no cumple, responde
-// 422 con la lista de errores (configurado en Program.cs) y el
-// dato malo jamás llega al servicio ni a la BD.
+// OJO CON EL NOMBRE: esto NO es un modelo. El modelo (la clase
+// entidad Producto) vive en Modelos/. Las clases de ESTA carpeta
+// son PETICIONES: describen el body que LLEGA en un verbo y cargan
+// las reglas para dejarlo entrar — son la FRONTERA DE ENTRADA de
+// la API. Hay UNA petición por semántica HTTP (esta para POST,
+// ProductoReemplazo para PUT y ProductoActualizar para PATCH), y
+// cada una DECLARA sus reglas con anotaciones. ASP.NET valida el
+// body contra la petición ANTES de que el controlador lo toque: si
+// algo no cumple, responde 422 con la lista de errores (configurado
+// en Program.cs) y el dato malo jamás llega al servicio ni a la BD.
 // ============================================================
 
 // Las anotaciones de validación ([Required], [Range]...) viven aquí:
 using System.ComponentModel.DataAnnotations;
 
-namespace ApiFacturas.Modelos;
+namespace ApiFacturas.Peticiones;
 
 public class ProductoCrear
 {
