@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- ============================================================
+       PruebaCapas.csproj — el proyecto de la prueba de capas.
+
+       Es una aplicación de CONSOLA independiente (criterio 6): usa
+       las clases de la API a través de una referencia de proyecto,
+       pero corre sin servidor web y sin SQL Server.
+       Ejecutar (desde api_facturas/):  dotnet run  con el parámetro
+       de proyecto apuntando a esta carpeta pruebas (el comando exacto
+       está en 7_quickstart.md; no se escribe aquí porque un comentario
+       XML no admite guiones dobles).
+       ============================================================ -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Referencia al proyecto de la API: así esta prueba puede usar
+         el modelo Producto, las interfaces y ServicioProducto. -->
+    <ProjectReference Include="../ApiFacturas.csproj" />
+  </ItemGroup>
+
+</Project>

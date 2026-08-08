@@ -1,0 +1,73 @@
+# ==============================================================
+# Proyecto Aplicación y Servicios Web — versión 1:
+# api_facturas (C#/ASP.NET Core) + SQL Server
+#
+#   Navegador → API FACTURAS (C#, :8032) → SQL Server (bdfacturas)
+#
+# Uso: docker compose up -d --build     (UN solo comando)
+# Reset de la BD: docker compose down -v && docker compose up -d
+#
+# Este archivo CRECE por versiones: v3 suma un segundo motor,
+# v5 la API genérica, v6 el front Blazor.
+# ==============================================================
+services:
+
+  # --- SQL Server 2022 (requiere ~2 GB de RAM) ---
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"                       # aceptar la licencia (obligatorio)
+      MSSQL_SA_PASSWORD: "Paradigmas123!"    # clave del superusuario 'sa'
+      MSSQL_PID: Developer                   # edición gratuita para desarrollo
+    volumes:
+      - mssqldata:/var/opt/mssql             # los datos sobreviven a `down`
+    ports:
+      - "11463:1433"     # puerto en su PC (para SQLTools/SSMS opcional)
+    healthcheck:
+      # ¿La BD ya RESPONDE consultas? (no solo "el contenedor existe")
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s    # margen de gracia: SQL Server tarda en arrancar
+
+  # --- Inicializador (crea bdfacturas la primera vez y termina) ---
+  # SQL Server NO ejecuta scripts montados automáticamente (a diferencia
+  # de otros motores): este contenedor se conecta, corre db/init.sh UNA
+  # vez, y muere. Si la BD ya existe, no hace nada.
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      sqlserver:
+        condition: service_healthy     # espera a que el motor RESPONDA
+    environment:
+      MSSQL_SA_PASSWORD: "Paradigmas123!"
+    volumes:
+      - ./db:/scripts:ro               # init.sh y bdfacturas.sql, solo lectura
+    entrypoint: ["/bin/bash", "/scripts/init.sh"]
+    restart: "no"                      # corre una vez; no revive
+
+  # --- API Facturas v1 — C# / ASP.NET Core ---
+  api-facturas:
+    build: ./api_facturas
+    volumes:
+      - ./api_facturas:/app      # el código montado: guardar un .cs recompila solo
+      - /app/bin                 # bin y obj quedan DENTRO del contenedor (Linux),
+      - /app/obj                 #   sin mezclarse con los compilados de Windows
+    restart: unless-stopped
+    ports:
+      - "8032:8032"              # http://localhost:8032
+    environment:
+      # La cadena usa el NOMBRE del servicio como host (sqlserver,1433),
+      # no localhost: dentro de la red interna de compose los servicios
+      # se resuelven por nombre. Esta variable SOBREESCRIBE el valor de
+      # appsettings.json (ASP.NET lee "ConnectionStrings__X" así).
+      ConnectionStrings__SqlServer: "Server=sqlserver,1433;Database=bdfacturas_sqlserver_local;User Id=sa;Password=Paradigmas123!;TrustServerCertificate=True;"
+    depends_on:
+      sqlserver-init:
+        condition: service_completed_successfully
+        # ↑ la API arranca cuando el inicializador TERMINÓ BIEN:
+        #   la BD ya existe con sus 12 tablas y datos.
+
+volumes:
+  mssqldata:      # declaración del volumen nombrado (la "memoria" de la BD)

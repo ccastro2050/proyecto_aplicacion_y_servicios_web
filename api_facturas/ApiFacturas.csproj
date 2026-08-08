@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- ============================================================
+       ApiFacturas.csproj — la "cédula" del proyecto .NET.
+
+       Este archivo XML le dice al SDK de .NET qué es este proyecto
+       y qué necesita para compilar. No se escribe código aquí:
+       solo configuración.
+       ============================================================ -->
+
+  <PropertyGroup>
+    <!-- La versión de .NET con la que se compila y ejecuta: -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Nullable habilita las advertencias de "esto puede ser null"
+         (el compilador nos cuida de los NullReferenceException): -->
+    <Nullable>enable</Nullable>
+    <!-- ImplicitUsings agrega solos los using más comunes
+         (System, System.Linq, etc.) para no repetirlos en cada archivo: -->
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- El ÚNICO paquete externo de la v1: el cliente oficial de
+         SQL Server para .NET (ADO.NET). Sin ORM: el SQL se escribe
+         a mano y queda visible — decisión de la constitución. -->
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- La carpeta pruebas/ tiene SU PROPIO proyecto (la prueba de
+         capas): se excluye de la compilación de la API para que no
+         se mezclen los dos programas. -->
+    <Compile Remove="pruebas/**" />
+    <Content Remove="pruebas/**" />
+    <None Remove="pruebas/**" />
+  </ItemGroup>
+
+</Project>

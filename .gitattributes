@@ -1,0 +1,5 @@
+# Normalizar finales de línea: en el repo siempre LF
+* text=auto
+
+# Los scripts de bash DEBEN ir con LF (corren dentro de contenedores Linux)
+*.sh text eol=lf

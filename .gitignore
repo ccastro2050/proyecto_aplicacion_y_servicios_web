@@ -1,0 +1,10 @@
+# Compilados de .NET (los genera dotnet build; jamás se versionan)
+bin/
+obj/
+
+# Archivos de sesión de SQLTools (borradores personales de SQL)
+*.session.sql
+
+# Archivos de usuario de IDEs
+*.user
+.vs/
