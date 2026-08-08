@@ -20,10 +20,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- El ÚNICO paquete externo de la v1: el cliente oficial de
-         SQL Server para .NET (ADO.NET). Sin ORM: el SQL se escribe
-         a mano y queda visible — decisión de la constitución. -->
+    <!-- Los DOS paquetes externos de la v1 (y ninguno más):
+         - Microsoft.Data.SqlClient: el cliente oficial de SQL Server
+           para .NET (ADO.NET). Sin ORM: el SQL se escribe a mano y
+           queda visible — decisión de la constitución.
+         - Swashbuckle.AspNetCore: genera la documentación interactiva
+           Swagger (/swagger) leyendo los controladores y modelos. -->
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>

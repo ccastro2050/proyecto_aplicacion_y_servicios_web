@@ -39,6 +39,7 @@ completa en SQL Server) y la API:
 | Qué | Dónde |
 |---|---|
 | **API Facturas** — diagnóstico | http://localhost:8032/ |
+| **Swagger** (documentación interactiva: ver y probar los endpoints) | http://localhost:8032/swagger |
 | Listar productos | http://localhost:8032/api/producto |
 | SQL Server (para SQLTools/SSMS, opcional) | `localhost,11463` · `sa`/`Paradigmas123!` |
 
@@ -114,7 +115,7 @@ proyecto_aplicacion_y_servicios_web/
 │                                #   cómo hacer el backup y cómo restaurarlo
 │
 ├── api_facturas/                # LA API DE LA v1 — C#/ASP.NET Core (puerto 8032)
-│   ├── ApiFacturas.csproj       # El proyecto .NET (único paquete: SqlClient)
+│   ├── ApiFacturas.csproj       # El proyecto .NET (paquetes: SqlClient y Swashbuckle)
 │   ├── Program.cs               # Punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
 │   ├── appsettings.json         # Cadena de conexión (default localhost,11463)
 │   ├── Dockerfile               # Imagen sdk:10.0 + dotnet watch

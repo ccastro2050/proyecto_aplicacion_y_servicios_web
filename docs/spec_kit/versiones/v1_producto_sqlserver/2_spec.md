@@ -73,14 +73,16 @@ frontend Blazor (v6) **sin reescribir lo construido**.
 - **Un solo comando** (Artículo 4): `docker-compose.yml` con SQL Server +
   su inicializador + la API, de modo que `docker compose up -d --build`
   deja todo funcionando.
-- Endpoint `/` de diagnóstico.
+- Endpoint `/` de diagnóstico y **documentación interactiva Swagger** en
+  `/swagger` (Swashbuckle): los endpoints se ven y se prueban desde el
+  navegador.
 
 **No incluye (y es deliberado — ver [mapa de versiones](../0_mapa_versiones.md)):**
 - **Ningún frontend** (Blazor llega en v6) y **ninguna API genérica** (v5).
 - Endpoints para otras entidades (v2) — las otras 11 tablas EXISTEN en la
   BD, pero el código de la v1 solo puede nombrar `producto`.
 - Otros motores y la fábrica de repositorios (v3, v4).
-- ORM (Entity Framework), autenticación, Swagger — no son de la v1.
+- ORM (Entity Framework) y autenticación — no son de la v1.
 
 ## 3. Requisitos funcionales
 

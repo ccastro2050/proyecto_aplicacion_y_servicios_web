@@ -26,9 +26,9 @@
 - **SIN ORM** (sin Entity Framework): el acceso a datos es **ADO.NET**
   (`SqlConnection`/`SqlCommand`) con el SQL escrito a mano, visible y
   SIEMPRE parametrizado (`@parametro` — nunca concatenar valores).
-- Único paquete externo permitido en la v1: `Microsoft.Data.SqlClient`
-  (el cliente oficial del motor). Nada más se instala sin que una spec lo
-  pida.
+- Paquetes externos permitidos en la v1 (y ninguno más sin que una spec
+  lo pida): `Microsoft.Data.SqlClient` (el cliente oficial del motor) y
+  `Swashbuckle.AspNetCore` (la documentación interactiva Swagger).
 
 ## Artículo 3 — Arquitectura en capas con interfaces, desde el día 1
 
@@ -81,7 +81,7 @@ PATCH (parcial → 200 con el mismo body).
 | Cosa | Convención |
 |---|---|
 | Puertos del proyecto | API facturas **8032** · SQL Server **11463** (reservados: front 8030, API genérica 8031, PostgreSQL 15462, MariaDB 13336) |
-| Rutas | `/` (diagnóstico) · `/api/producto` (v1) |
+| Rutas | `/` (diagnóstico) · `/swagger` (documentación interactiva) · `/api/producto` (v1) |
 | Nombres | PascalCase en español; interfaces con prefijo `I`; carpetas `Controllers/ Modelos/ Servicios/ Repositorios/ Excepciones/ pruebas/` |
 | Sobre de respuesta | Lecturas: `{tabla, limite, total, datos}` · Errores: `{estado, mensaje, detalle}` (+ `errores:[…]` en el 422) |
 | Errores | Modelo inválido → **422** · `ArgumentException` → **400** · `NoEncontradoExcepcion` → **404** · `SqlException` y demás → **500** |

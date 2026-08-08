@@ -72,8 +72,21 @@ builder.Services.AddControllers()
         };
     });
 
+// ------------------------------------------------------------
+// 2b. Swagger — la documentación interactiva de la API
+// ------------------------------------------------------------
+// Swashbuckle lee los controladores y modelos y genera una página
+// donde se ven TODOS los endpoints y se pueden probar desde el
+// navegador (http://localhost:8032/swagger).
+builder.Services.AddEndpointsApiExplorer();   // descubre los endpoints
+builder.Services.AddSwaggerGen();             // arma el documento OpenAPI
+
 // Construir la aplicación con todo lo registrado:
 var app = builder.Build();
+
+// Encender Swagger: el JSON (OpenAPI) y la página interactiva:
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // ------------------------------------------------------------
 // 3. Las rutas

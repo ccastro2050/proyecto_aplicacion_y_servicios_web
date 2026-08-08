@@ -25,6 +25,9 @@
 → 200 {"mensaje":"API Facturas funcionando","version":"v1","contratos":"docs/spec_kit/versiones/v1_producto_sqlserver/6_contracts.md"}
 ```
 
+Además: `GET /swagger` abre la **documentación interactiva** (Swagger UI) —
+todos estos endpoints se ven y se prueban desde el navegador.
+
 ## 2. `GET /api/producto[?limite=N]` — Listar
 
 ```

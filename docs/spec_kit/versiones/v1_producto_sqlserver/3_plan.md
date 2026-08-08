@@ -25,7 +25,7 @@
 │   ├── bdfacturas.sql                # la BD completa, PROVISTA (se copia, no se genera)
 │   └── init.sh                       # el inicializador (SQL Server no auto-ejecuta scripts)
 └── api_facturas/
-    ├── ApiFacturas.csproj            # el proyecto .NET (único paquete: SqlClient)
+    ├── ApiFacturas.csproj            # el proyecto .NET (paquetes: SqlClient y Swashbuckle)
     ├── Program.cs                    # punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
     ├── appsettings.json              # cadena de conexión (default localhost:11463)
     ├── Dockerfile                    # sdk:10.0 + dotnet watch (puerto 8032)

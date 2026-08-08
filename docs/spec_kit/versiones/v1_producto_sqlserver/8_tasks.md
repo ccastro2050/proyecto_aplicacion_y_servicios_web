@@ -77,7 +77,8 @@
       ([3_plan.md](3_plan.md) §4.5) y el 204 para lista vacía.
 - [ ] `Program.cs`: el ENSAMBLADOR (los dos AddScoped), la respuesta 422
       personalizada (`InvalidModelStateResponseFactory` → `{estado,
-      mensaje, errores}`), el `GET /` de diagnóstico y `MapControllers`.
+      mensaje, errores}`), **Swagger** (`AddSwaggerGen` + `UseSwagger` +
+      `UseSwaggerUI`), el `GET /` de diagnóstico y `MapControllers`.
 
 **Verificar:** con la BD arriba y `dotnet run`, probar: listar (200 con 8 y
 `?limite=3` con 3), obtener PR001 (200), PR999 (404), POST inválido (422

@@ -21,6 +21,7 @@ arriba. La primera compilación de `dotnet watch` toma ~30-60 segundos más.
 ```powershell
 # 1. Diagnóstico (y de paso: edite un .cs, guarde — recompila solo)
 curl.exe http://localhost:8032/
+# … y la documentación interactiva en el navegador: http://localhost:8032/swagger
 
 # 2. Listar: 8 productos; con limite=3, exactamente 3
 curl.exe http://localhost:8032/api/producto

@@ -213,7 +213,8 @@ research con las decisiones, modelo de datos, contratos, quickstart y tareas).
 REGLAS DE TRABAJO (no negociables):
 
 1. La especificación manda. No agregues NADA que los documentos no pidan:
-   ni paquetes NuGet extra (solo Microsoft.Data.SqlClient), ni Entity
+   ni paquetes NuGet extra (solo Microsoft.Data.SqlClient y
+   Swashbuckle.AspNetCore), ni Entity
    Framework, ni Swagger, ni tablas extra, ni motores extra, ni fábricas
    "por si acaso", ni mejoras de tu cosecha. Si crees que falta algo,
    pregúntame antes.
@@ -334,7 +335,8 @@ no escribas ni modifiques SQL de creación de tablas.
 REGLAS (no negociables):
 
 1. La especificación manda. No agregues NADA que los documentos no pidan:
-   ni paquetes NuGet extra (solo Microsoft.Data.SqlClient), ni Entity
+   ni paquetes NuGet extra (solo Microsoft.Data.SqlClient y
+   Swashbuckle.AspNetCore), ni Entity
    Framework, ni Swagger, ni tablas extra, ni motores extra, ni fábricas
    "por si acaso". Si crees que falta algo, pregúntame antes.
 2. Sigue 8_tasks.md fase por fase, en orden. Al terminar cada fase, EJECUTA
