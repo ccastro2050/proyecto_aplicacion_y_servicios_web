@@ -134,6 +134,7 @@ proyecto_aplicacion_y_servicios_web/
 │   ├── GUIA_IA.md               # Cómo reconstruir la versión desde 0 con ayuda de una IA
 │   ├── FLUJO_DE_UNA_PETICION.md # Dónde "está" el GET, dónde se captura el POST
 │   ├── TUTORIAL_SSMS.md         # Administrar la BD con SQL Server Management Studio
+│   ├── TUTORIAL_VSCODE_SQLTOOLS.md # Administrar la BD desde VS Code (SQLTools)
 │   ├── PARADIGMA_POO.md         # Material conceptual: POO, SOLID+capas, ACID,
 │   ├── SOLID_Y_CAPAS.md         #   Docker y SDD (un .md por tema)
 │   ├── PRINCIPIOS_ACID.md       #
