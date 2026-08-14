@@ -114,6 +114,9 @@ proyecto_aplicacion_y_servicios_web/
 ├── backupdb/                    # Respaldos (.bak) de la BD — su README explica
 │                                #   cómo hacer el backup y cómo restaurarlo
 │
+├── postman/                     # La colección de Postman lista para importar:
+│                                #   los 13 endpoints en orden didáctico (alternativa a Swagger)
+│
 ├── api_facturas/                # LA API DE LA v1 — C#/ASP.NET Core (puerto 8032)
 │   ├── ApiFacturas.csproj       # El proyecto .NET (paquetes: SqlClient y Swashbuckle)
 │   ├── Program.cs               # Punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
@@ -185,6 +188,7 @@ de aceptación (commit + tag). Mapa completo:
 | Documento | Qué cubre |
 |---|---|
 | [El flujo de una petición](docs/FLUJO_DE_UNA_PETICION.md) | **Léalo primero:** dónde está el GET, dónde se captura el POST, y el viaje completo por las capas |
+| [Colección de Postman](postman/README.md) | Los 13 endpoints de la v1 listos para importar y probar con clics — incluida la pareja PUT=422 vs PATCH=200 |
 | [SDD y Spec Kit](docs/SDD_SPECKIT.md) | La metodología con la que se trabaja este curso: la spec manda sobre el código |
 | [El paradigma P.O.O. en C#](docs/PARADIGMA_POO.md) | Qué es un paradigma, los 4 pilares, y las propiedades e interfaces de C# |
 | [SOLID y programación por capas](docs/SOLID_Y_CAPAS.md) | Los 5 principios y las capas — y en qué versión se demuestra cada uno |

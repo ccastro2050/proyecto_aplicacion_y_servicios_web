@@ -88,7 +88,7 @@ en un **proyecto propio, en una carpeta nueva y vacía**:
    pegando en cada archivo el código que la IA le entregue:
 
    ```powershell
-   New-Item docker-compose.yml, api_facturas\ApiFacturas.csproj, api_facturas\Program.cs, api_facturas\appsettings.json, api_facturas\Dockerfile, api_facturas\Modelos\Producto.cs, api_facturas\Peticiones\ProductoCrear.cs, api_facturas\Peticiones\ProductoReemplazo.cs, api_facturas\Peticiones\ProductoActualizar.cs, api_facturas\Controllers\ProductoController.cs, api_facturas\Servicios\IServicioProducto.cs, api_facturas\Servicios\ServicioProducto.cs, api_facturas\Repositorios\IRepositorioProducto.cs, api_facturas\Repositorios\RepositorioProductoSqlServer.cs, api_facturas\Excepciones\NoEncontradoExcepcion.cs, api_facturas\pruebas\PruebaCapas.csproj, api_facturas\pruebas\Programa.cs
+   New-Item .gitignore, docker-compose.yml, api_facturas\ApiFacturas.csproj, api_facturas\Program.cs, api_facturas\appsettings.json, api_facturas\Dockerfile, api_facturas\Modelos\Producto.cs, api_facturas\Peticiones\ProductoCrear.cs, api_facturas\Peticiones\ProductoReemplazo.cs, api_facturas\Peticiones\ProductoActualizar.cs, api_facturas\Controllers\ProductoController.cs, api_facturas\Servicios\IServicioProducto.cs, api_facturas\Servicios\ServicioProducto.cs, api_facturas\Repositorios\IRepositorioProducto.cs, api_facturas\Repositorios\RepositorioProductoSqlServer.cs, api_facturas\Excepciones\NoEncontradoExcepcion.cs, api_facturas\pruebas\PruebaCapas.csproj, api_facturas\pruebas\Programa.cs
    ```
 
    (`db/bdfacturas.sql` y `db/init.sh` NO están en la lista a propósito:
@@ -124,6 +124,7 @@ mi_v1_producto/                   ← SU carpeta
 │       ├── 1_constitution.md
 │       └── versiones/
 │           └── v1_producto_sqlserver/  ← los 7 documentos de la v1
+├── .gitignore                    ← Fase 6 (excluye bin/, obj/, *.session.sql)
 ├── docker-compose.yml            ← Fase 0 (sqlserver + init) y Fase 6 (api-facturas)
 ├── db/
 │   ├── bdfacturas.sql            ← Fase 0: COPIADO del repo (no lo genera la IA)
@@ -211,6 +212,11 @@ proyecto universitario, partiendo de cero. Te adjunto 8 documentos: una
 constitución (reglas permanentes) y el spec kit de la versión 1 (spec, plan,
 research con las decisiones, modelo de datos, contratos, quickstart y tareas).
 
+El proyecto es C# sobre ASP.NET Core (.NET 10) + SQL Server — así lo fija
+3_plan.md. Si en tu respuesta aparece OTRO lenguaje o framework (Python,
+Java, Node, PHP…), significa que no leíste los documentos adjuntos: detente
+y dímelo en vez de continuar.
+
 REGLAS DE TRABAJO (no negociables):
 
 1. La especificación manda. No agregues NADA que los documentos no pidan:
@@ -288,7 +294,13 @@ que entendiste el alcance) y luego arranca con la Fase 0.
    `localhost:8132`, y donde diga `11463` use `11563`.
 4. **Si la IA se acelera** y entrega varios archivos de un tirón,
    recuérdele la regla 2b: "de a uno, espera mi listo".
-5. **Si el chat pierde el contexto** (conversaciones largas): abra un chat
+5. **Si la primera respuesta llega en OTRO lenguaje** (Python, Java, Node,
+   PHP…), no corrija sobre eso: es la señal inequívoca de que la IA **no
+   leyó los adjuntos**. Cierre ese chat, verifique que los 8 documentos
+   realmente cargaron (deslice el carrusel de adjuntos) y que son los de
+   ESTE proyecto (3_plan.md debe decir C#/ASP.NET Core + SQL Server), y
+   empiece de nuevo con el prompt tal cual.
+6. **Si el chat pierde el contexto** (conversaciones largas): abra un chat
    nuevo, vuelva a subir los 8 documentos y agregue al prompt: "Ya tengo
    construidas las fases 0 a N; te pego el código actual. Continuemos en
    la fase N+1" (y pegue sus archivos).

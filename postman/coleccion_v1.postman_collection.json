@@ -1,0 +1,151 @@
+{
+  "info": {
+    "name": "API Facturas v1 (C# + SQL Server)",
+    "description": "Los endpoints de la v1 en orden didáctico: diagnóstico → lecturas → ciclo de escritura → la pareja PUT/PATCH → los errores. Cada petición explica en su descripción qué esperar. La variable {{base}} apunta al proyecto del curso (localhost:8032); para probar SU reconstrucción cámbiela a localhost:8132.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base", "value": "http://localhost:8032" }
+  ],
+  "item": [
+    {
+      "name": "1. Diagnóstico — GET /",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/",
+        "description": "Debe responder 200 con {mensaje, version: \"v1\", contratos}. Si falla, la API no está corriendo: docker compose up -d."
+      }
+    },
+    {
+      "name": "2. Listar productos — GET /api/producto",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/api/producto",
+        "description": "200 con el sobre {tabla, limite, total: 8, datos: [...]} — los 8 productos de ejemplo de db/bdfacturas.sql, ordenados por código."
+      }
+    },
+    {
+      "name": "3. Listar con límite — GET /api/producto?limite=3",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base}}/api/producto?limite=3",
+          "host": ["{{base}}"],
+          "path": ["api", "producto"],
+          "query": [{ "key": "limite", "value": "3" }]
+        },
+        "description": "El query string en acción: 200 con exactamente 3 productos (total: 3). Pruebe también limite=0: responde 400 (regla del servicio)."
+      }
+    },
+    {
+      "name": "4. Obtener uno — GET /api/producto/PR001",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/api/producto/PR001",
+        "description": "El parámetro de ruta en acción: 200 con la Laptop Lenovo IdeaPad (el JSON del producto, sin sobre)."
+      }
+    },
+    {
+      "name": "5. Obtener inexistente — GET /api/producto/PR999 (→ 404)",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/api/producto/PR999",
+        "description": "404 con el sobre de error {estado, mensaje: \"Producto no encontrado.\", detalle}. La NoEncontradoExcepcion del servicio traducida por el controller."
+      }
+    },
+    {
+      "name": "6. Crear — POST /api/producto (→ 200)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/api/producto",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"PR009\",\n  \"nombre\": \"Webcam\",\n  \"stock\": 10,\n  \"valorunitario\": 350000\n}"
+        },
+        "description": "200 {estado, mensaje}. El body pasó por la petición ProductoCrear (todos los campos obligatorios, no negativos). Ejecútela dos veces: la segunda da 500 (PK duplicada — el error del motor viaja en detalle)."
+      }
+    },
+    {
+      "name": "7. Reemplazar completo — PUT /api/producto/PR009 (→ 200)",
+      "request": {
+        "method": "PUT",
+        "url": "{{base}}/api/producto/PR009",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Webcam HD\",\n  \"stock\": 12,\n  \"valorunitario\": 380000\n}"
+        },
+        "description": "200 {estado, mensaje, filasAfectadas: 1}. PUT = reemplazo COMPLETO: la petición ProductoReemplazo exige los 3 campos (el código va en la URL y no cambia)."
+      }
+    },
+    {
+      "name": "8. Actualizar parcial — PATCH /api/producto/PR009 (→ 200)",
+      "request": {
+        "method": "PATCH",
+        "url": "{{base}}/api/producto/PR009",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"stock\": 15\n}"
+        },
+        "description": "200 {estado, mensaje, filasAfectadas: 1}. PATCH = parcial: solo cambia lo enviado (petición ProductoActualizar, todos opcionales). Con body {} responde 400: no hay nada que actualizar."
+      }
+    },
+    {
+      "name": "9. LA PAREJA (a): PUT con body parcial (→ 422)",
+      "request": {
+        "method": "PUT",
+        "url": "{{base}}/api/producto/PR009",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"stock\": 99\n}"
+        },
+        "description": "422 con errores[]: a PUT le faltan nombre y valorunitario — reemplazar el recurso entero exige TODOS los campos. Compare con la petición 10: el MISMO body."
+      }
+    },
+    {
+      "name": "10. LA PAREJA (b): PATCH con el MISMO body (→ 200)",
+      "request": {
+        "method": "PATCH",
+        "url": "{{base}}/api/producto/PR009",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"stock\": 99\n}"
+        },
+        "description": "200. El mismo body que acaba de dar 422 en PUT. Esta pareja ES la lección: cada verbo tiene su semántica y la API la hace cumplir (criterio de aceptación 4)."
+      }
+    },
+    {
+      "name": "11. Body inválido — POST (→ 422 con errores[])",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/api/producto",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"PR010\",\n  \"stock\": -5\n}"
+        },
+        "description": "422 {estado, mensaje: \"Datos inválidos.\", errores: [...]} — la lista dice qué falta (nombre, valorunitario) y qué viola las reglas (stock negativo). Nada llegó al servicio ni a la BD: la validación muere en la frontera."
+      }
+    },
+    {
+      "name": "12. Eliminar — DELETE /api/producto/PR009 (→ 200)",
+      "request": {
+        "method": "DELETE",
+        "url": "{{base}}/api/producto/PR009",
+        "description": "200 {estado, mensaje, filasEliminadas: 1}. Deja la tabla como estaba al inicio del recorrido."
+      }
+    },
+    {
+      "name": "13. Eliminar de nuevo — DELETE repetido (→ 404)",
+      "request": {
+        "method": "DELETE",
+        "url": "{{base}}/api/producto/PR009",
+        "description": "404: el producto ya no existe (filas eliminadas = 0 → NoEncontradoExcepcion → 404). Es la segunda mitad del criterio de aceptación 4."
+      }
+    }
+  ]
+}
