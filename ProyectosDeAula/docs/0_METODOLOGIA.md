@@ -54,7 +54,24 @@ Las antiguas "entregas" ahora son **versiones** con spec kit propio:
 | **v3** | **JWT + sesiones + control de acceso por roles** + CRUD de usuario/rol/rol_usuario (solo admin) | Regresión v1-v2 + criterios + tag `v3` |
 | **v4** | Aplicativo completo: **10 consultas multitabla** (4+ tablas c/u), **dashboard**, **imagen corporativa**, páginas corporativas, responsive/PWA y **publicación** en servidor gratuito | Regresión total + criterios + tag `v4` |
 
-Las fechas y porcentajes de cada versión los asigna el profesor en clase.
+### 2.1 Calendario y evaluación del semestre (100%)
+
+Las fechas generales aplican a todos los grupos; la **fecha exacta** de su
+grupo la fija el profesor en clase (anótela en el espacio en blanco).
+
+| Momento | Fecha general | Fecha exacta (su grupo) | Evaluación |
+|---|---|---|---|
+| **Evaluación individual teórico-práctica** | Segunda semana de **septiembre** | \_\_\_\_/\_\_\_\_/\_\_\_\_\_\_\_\_ | **20%** individual |
+| **Entrega versión 1** | Última semana de **septiembre** | \_\_\_\_/\_\_\_\_/\_\_\_\_\_\_\_\_ | **20%** — 10% sustentación individual (incluidos los commits) + 10% entrega en equipo |
+| **Entrega versión 2** | Última semana de **octubre** | \_\_\_\_/\_\_\_\_/\_\_\_\_\_\_\_\_ | **20%** — 10% sustentación individual (incluidos los commits) + 10% entrega en equipo |
+| **Entrega versión 3** | Segunda semana de **noviembre** | \_\_\_\_/\_\_\_\_/\_\_\_\_\_\_\_\_ | **20%** — 10% sustentación individual (incluidos los commits) + 10% entrega en equipo |
+| **Entrega versión 4** | Última semana de **noviembre** | \_\_\_\_/\_\_\_\_/\_\_\_\_\_\_\_\_ | **20%** — 10% sustentación individual (incluidos los commits) + 10% entrega en equipo |
+
+> **"Incluidos los commits"** significa que en la sustentación individual
+> cada estudiante responde por SU rama: qué hizo, por qué, y sus commits
+> lo respaldan (frecuentes, descriptivos, propios). Una rama sin commits —
+> o con un solo commit gigante la noche anterior — es una sustentación
+> sin evidencia.
 
 ## 3. El spec kit que cada equipo ESCRIBE (por versión)
 
