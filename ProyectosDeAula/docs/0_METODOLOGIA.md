@@ -205,20 +205,26 @@ seguridad de la versión**.
 
 ## 7. Rúbrica de evaluación
 
-Aplica en cada versión; el profesor asigna el peso por criterio.
+Aplica en cada versión; el profesor asigna el peso por criterio. Cada
+criterio se califica en una de dos franjas: **Cumple (de 3.0 a 5.0**,
+según la calidad de lo entregado**)** o **No cumple (de 0 a 2.9)**.
 
-| Criterio | Excelente (5.0) | Insuficiente (< 3.0) |
+| Criterio | Cumple (3.0 – 5.0) | No cumple (0 – 2.9) |
 |---|---|---|
 | **Especificación (SDD)** | Spec kit de la versión completo ANTES del código; criterios de aceptación verificables; lo construido coincide con la spec | No hay spec, se escribió después "para cumplir", o contradice lo construido |
-| **Funcionalidad de la API** | Todos los endpoints de la versión funcionan con JSON y códigos correctos | Endpoints caídos o sin JSON |
-| **Funcionalidad del Frontend** | Todas las interfaces consumen la API y son usables | No funcionan o van directo a la BD |
-| **Separación API/Front** | Total: el front jamás toca la BD | No hay separación |
+| **Funcionalidad de la API** | Los endpoints de la versión funcionan con JSON y códigos correctos | Endpoints caídos o sin JSON |
+| **Funcionalidad del Frontend** | Las interfaces consumen la API y son usables | No funcionan o van directo a la BD |
+| **Separación API/Front** | El front jamás toca la BD | No hay separación |
 | **Seguridad (v3+) y secretos (todas)** | JWT + roles funcionando; contraseñas hasheadas; **cero secretos en el código**, `.env.example` presente | Sin autenticación, contraseñas o secretos quemados/en texto plano |
-| **Borrado lógico** | En todas las tablas, con inactivos filtrados | Borrado físico |
+| **Borrado lógico** | En las tablas de la versión, con inactivos filtrados | Borrado físico |
 | **Git y GitHub** | Repos privados con el profesor invitado; cada estudiante en su rama; TODO por PR; solo el encargado hace merge; tags v1…vN; commits descriptivos | Commits directos a main, repo público o sin el profesor, "un solo commit con todo" |
-| **Dashboard y consultas (v4)** | 10+ consultas de 4+ tablas con gráficos claros | Menos de 4 o sin dashboard |
+| **Dashboard y consultas (v4)** | 10 consultas de 4+ tablas con gráficos claros | Menos de 10 consultas, consultas de menos de 4 tablas, o sin dashboard |
 | **Imagen corporativa y responsive (v4)** | Identidad coherente; todo responsive | Sin identidad o no responsive |
 | **Publicación (v4)** | Publicado, funcional, con secretos en variables de entorno del servidor | No publicado o con secretos expuestos |
+
+Dentro de la franja "Cumple", la nota (3.0 a 5.0) refleja la calidad:
+completitud, solidez ante errores, claridad del código y de la spec, y la
+sustentación individual.
 
 **Entregar en cada versión:** enlaces a los 2 repos (con el tag `vN`
 puesto) + evidencia del quickstart de su spec pasando. En la v4, además:
