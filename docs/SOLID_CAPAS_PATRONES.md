@@ -1,8 +1,9 @@
-# SOLID y programación por capas — en este proyecto
+# SOLID, programación por capas y patrones de diseño — en este proyecto
 
-> Documento conceptual del curso: los 5 principios SOLID y la arquitectura
-> por capas, cada uno con su ejemplo REAL en el código de la versión en
-> curso — y en qué versión futura se termina de demostrar.
+> Documento conceptual del curso: los 5 principios SOLID, la arquitectura
+> por capas y los patrones de diseño que este código usa, cada uno con su
+> ejemplo REAL en la versión en curso — y en qué versión se termina de
+> demostrar.
 
 ---
 
@@ -111,20 +112,24 @@ public async Task<IActionResult> Obtener(string codigo)
 ```
 
 ### O — Abierto/Cerrado (Open/Closed)
-Abierto a extensión, cerrado a modificación. **El examen será la v3**:
-agregar PostgreSQL debe ser AGREGAR una clase
-(`RepositorioProductoPostgreSql : IRepositorioProducto`) y tocar SOLO el
-ensamblador — sin modificar controller, servicio ni la interfaz.
+Abierto a extensión, cerrado a modificación. **El examen llega con el
+segundo motor (la v4 del mapa del curso)**: agregar PostgreSQL debe ser
+AGREGAR clases (`RepositorioProductoPostgres : IRepositorioProducto`) y
+tocar SOLO el ensamblador — sin modificar controller, servicio ni la
+interfaz.
 
 ```csharp
-// La v3 AGREGARÁ sin modificar: una clase nueva con la misma interfaz...
-public class RepositorioProductoPostgreSql : IRepositorioProducto { /* … */ }
+// La v4 AGREGA sin modificar: una clase nueva con la misma interfaz...
+public class RepositorioProductoPostgres : IRepositorioProducto { /* … */ }
 
-// ...y el ensamblador (Program.cs, ÚNICO archivo tocado) elegirá el motor:
-builder.Services.AddScoped<IRepositorioProducto>(
-    _ => motor == "postgres"
-        ? new RepositorioProductoPostgreSql(cadena)
-        : new RepositorioProductoSqlServer(cadena));
+// ...y el ensamblador (Program.cs, ÚNICO archivo tocado) elige el motor
+// en UN solo punto — la fábrica de repositorios (ver §3, patrones):
+IFabricaRepositorios fabrica = motor switch
+{
+    "sqlserver" => new FabricaSqlServer(cadenaSqlServer),
+    "postgres"  => new FabricaPostgres(cadenaPostgres),
+    _ => throw new InvalidOperationException($"Motor desconocido: '{motor}'."),
+};
 ```
 
 ### L — Sustitución de Liskov
@@ -178,21 +183,111 @@ Solo el **ensamblador** (la sección de DI en `Program.cs`) conoce las
 clases concretas. Eso es literalmente "invertir" la dependencia: el detalle
 (SQL Server) depende del contrato, no al revés.
 
-## 3. El mapa SOLID ↔ versiones del curso
+## 3. Patrones de diseño (los que trabajan en este proyecto)
+
+**¿Qué es un patrón de diseño?** Una solución **con nombre**, probada y
+reutilizable, para un problema de diseño que aparece una y otra vez. No es
+código para copiar y pegar: es la FORMA de una solución — qué clases y qué
+interfaces participan, y quién conoce a quién — que cada proyecto escribe
+en su propio código. El catálogo clásico es el del "Gang of Four" (GoF,
+1994): 23 patrones en tres familias — **creacionales** (cómo se construyen
+los objetos), **estructurales** (cómo se componen) y **de comportamiento**
+(cómo colaboran). Otros, como Repositorio y DTO, vienen del catálogo de
+arquitectura empresarial de Fowler (PoEAA, 2002).
+
+La relación con lo anterior: **SOLID dice qué cualidades debe tener el
+diseño; los patrones son recetas concretas que las consiguen; las capas
+son el plano general donde unos y otras viven.** Y el nombre importa:
+decir "esto es una fábrica abstracta" comunica un diseño completo en tres
+palabras.
+
+Los que trabajan en este código:
+
+| Patrón | Familia | Dónde vive aquí |
+|---|---|---|
+| **Repositorio** (Repository) | arquitectónico (PoEAA) | `Repositorios/`: todo el acceso a datos detrás de una interfaz |
+| **Inyección de dependencias** | creacional (IoC) | los constructores + el ensamblador de `Program.cs` |
+| **DTO** — objeto de petición | arquitectónico (PoEAA) | `Peticiones/`: un objeto por verbo que valida la forma del body |
+| **Fábrica abstracta** (Abstract Factory) | creacional (GoF) | llega con el segundo motor (la v4 del curso): la familia completa de repositorios por motor |
+| **Estrategia** (Strategy) | comportamiento (GoF) | implícito: implementaciones intercambiables tras cada interfaz |
+
+### Repositorio — el negocio pide datos a un contrato, no a un motor
+
+```csharp
+// El contrato (Repositorios/IRepositorioProducto.cs):
+Task<Producto?> ObtenerPorCodigoAsync(string codigo);
+
+// ServicioProducto lo usa SIN saber si detrás hay SQL Server, otro motor
+// o un diccionario en memoria (las pruebas). Por eso el segundo motor
+// (v4) puede llegar sin tocar una línea del servicio.
+```
+
+### Inyección de dependencias — nadie hace `new` de lo que necesita
+
+```csharp
+// La dependencia LLEGA por el constructor (una interfaz, no una clase):
+public ServicioProducto(IRepositorioProducto repositorio) { … }
+
+// y el ÚNICO que sabe qué entregar es el ensamblador (Program.cs):
+builder.Services.AddScoped<IServicioProducto, ServicioProducto>();
+```
+
+### DTO por verbo — el body aterriza en un objeto que solo valida forma
+
+```csharp
+public class ProductoCrear
+{
+    [Required(ErrorMessage = "El campo codigo es obligatorio.")]
+    public string? Codigo { get; set; }
+    [Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo.")]
+    public int? Stock { get; set; }
+    // Si no cumple → 422 con errores[] — y el modelo de dominio ni se entera.
+}
+```
+
+### Fábrica abstracta — UNA decisión, la familia completa (v4)
+
+```csharp
+// Así la construye la v4 del curso: un punto del código decide el motor…
+IFabricaRepositorios fabrica = motor switch
+{
+    "sqlserver" => new FabricaSqlServer(cadenaSqlServer),
+    "postgres"  => new FabricaPostgres(cadenaPostgres),
+    _ => throw new InvalidOperationException($"Motor desconocido: '{motor}'."),
+};
+// …y la fábrica entrega los repositorios COHERENTES entre sí:
+builder.Services.AddScoped<IRepositorioProducto>(_ => fabrica.CrearRepositorioProducto());
+// Agregar un motor cuesta UNA clase y UN case — eso compra el patrón.
+```
+
+### Estrategia — el patrón que va de regalo
+
+La pareja "interfaz + implementaciones intercambiables"
+(`RepositorioProductoSqlServer`, el falso de las pruebas — y los
+repositorios de cada motor que vengan) es la esencia de Strategy. La
+elección no cambia en caliente: se hace UNA vez al arrancar — pero el
+mecanismo es el mismo: quien usa la interfaz jamás pregunta cuál
+implementación le tocó.
+
+## 4. El mapa SOLID ↔ versiones del curso
 
 | Principio | Se ve desde | Se termina de demostrar en |
 |---|---|---|
 | S | v1 (una clase por responsabilidad) | v2 (más entidades, mismas responsabilidades) |
-| O | v1 (la interfaz existe) | **v3** (segundo motor sin tocar lo construido) |
-| L | v1 (el repositorio falso de las pruebas) | v3/v4 (motores intercambiables de verdad) |
-| I | v1 (interfaces mínimas) | v5 (la API genérica separa contratos por capacidad) |
-| D | v1 (constructores reciben interfaces) | v3 (la fábrica reemplaza al ensamblador simple) |
+| O | v1 (la interfaz existe) | **v4** (segundo motor sin tocar lo construido) |
+| L | v1 (el repositorio falso de las pruebas) | v4 (motores intercambiables de verdad) |
+| I | v1 (interfaces mínimas) | v6 (la API genérica separa contratos por capacidad) |
+| D | v1 (constructores reciben interfaces) | v4 (la fábrica reemplaza al ensamblador simple) |
 
-## 4. Referencias
+## 5. Referencias
 
 1. Martin, R. — *Design Principles and Design Patterns* (el texto original
    de SOLID).
-2. Microsoft — Inyección de dependencias en .NET:
+2. Gamma, Helm, Johnson y Vlissides — *Design Patterns* (GoF, 1994): el
+   catálogo original de los 23 patrones.
+3. Fowler, M. — *Patterns of Enterprise Application Architecture* (PoEAA,
+   2002): Repositorio, DTO y compañía.
+4. Microsoft — Inyección de dependencias en .NET:
    <https://learn.microsoft.com/dotnet/core/extensions/dependency-injection>
 3. En este repositorio: [PARADIGMA_POO.md](PARADIGMA_POO.md) (los pilares
    sobre los que SOLID se apoya) y el spec kit de la versión en curso.

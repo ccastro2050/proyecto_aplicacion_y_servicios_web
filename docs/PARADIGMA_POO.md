@@ -119,7 +119,7 @@ petición puede volver a fusionarse con el modelo en una sola clase.
    el servicio con un repositorio falso en memoria) solo es posible porque
    el servicio depende de una abstracción, no de SQL Server.
 4. **Puente a SOLID:** los principios SOLID
-   ([SOLID_Y_CAPAS.md](SOLID_Y_CAPAS.md)) son reglas de diseño **dentro**
+   ([SOLID_CAPAS_PATRONES.md](SOLID_CAPAS_PATRONES.md)) son reglas de diseño **dentro**
    del paradigma orientado a objetos — sin P.O.O. no hay SOLID que aplicar.
 
 ## 6. Ejemplo resumido: la v1 vista con lentes de P.O.O.
@@ -143,5 +143,5 @@ NoEncontradoExcepcion            ← herencia: una Exception con nombre propio
    <https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/properties>
 3. Microsoft — Interfaces en C#:
    <https://learn.microsoft.com/dotnet/csharp/fundamentals/types/interfaces>
-4. En este repositorio: [SOLID_Y_CAPAS.md](SOLID_Y_CAPAS.md) y el código
+4. En este repositorio: [SOLID_CAPAS_PATRONES.md](SOLID_CAPAS_PATRONES.md) y el código
    de `api_facturas/` (comentado línea a línea).
