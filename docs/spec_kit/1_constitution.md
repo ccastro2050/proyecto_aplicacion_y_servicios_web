@@ -23,12 +23,14 @@
 - Lenguaje **C#** sobre **ASP.NET Core** (.NET 10): controladores con
   atributos, inyección de dependencias del framework, `async/await` en todo
   el acceso a datos.
-- **SIN ORM** (sin Entity Framework): el acceso a datos es **ADO.NET**
-  (`SqlConnection`/`SqlCommand`) con el SQL escrito a mano, visible y
-  SIEMPRE parametrizado (`@parametro` — nunca concatenar valores).
+- **SIN ORM de entidades** (sin Entity Framework): el SQL se escribe
+  A MANO, visible y SIEMPRE parametrizado (`@parametro` — nunca
+  concatenar valores). El ejecutor es **Dapper** (micro-ejecutor sobre
+  ADO.NET): mapea fila→objeto pero JAMÁS genera SQL por nosotros — si
+  una consulta existe, está escrita en el repositorio.
 - Paquetes externos permitidos en la v1 (y ninguno más sin que una spec
-  lo pida): `Microsoft.Data.SqlClient` (el cliente oficial del motor) y
-  `Swashbuckle.AspNetCore` (la documentación interactiva Swagger).
+  lo pida): `Microsoft.Data.SqlClient` (el cliente oficial del motor),
+  `Dapper` (el micro-ejecutor) y `Swashbuckle.AspNetCore` (Swagger).
 
 ## Artículo 3 — Arquitectura en capas con interfaces, desde el día 1
 
@@ -36,7 +38,7 @@
 HTTP → Controller (valida el body contra la PETICIÓN del verbo → 422)
      → IServicioProducto      (interfaz — reglas de negocio)
      → IRepositorioProducto   (interfaz — el servicio no sabe qué motor hay)
-     → RepositorioProducto<Motor>  (ADO.NET, SQL parametrizado)
+     → RepositorioProducto<Motor>  (Dapper, SQL a mano parametrizado)
      → la base de datos
 ```
 

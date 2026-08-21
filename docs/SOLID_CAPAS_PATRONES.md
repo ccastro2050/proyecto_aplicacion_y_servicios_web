@@ -42,7 +42,7 @@ contrato. Así se ve el **viaje de UNA petición** por dentro de la API — el
 ┌─────────────────────────────────────────────────────┐
 │ CAPA 3 — REPOSITORIO (datos)                        │
 │ Repositorios/RepositorioProductoSqlServer.cs        │
-│ El SQL con ADO.NET: traduce filas ↔ objetos         │
+│ El SQL a mano (Dapper): traduce filas ↔ objetos     │
 │ Producto. NO conoce HTTP. NO decide negocio.        │
 └────────────────┬────────────────────────────────────┘
                  │  ④ SELECT … FROM producto WHERE codigo = @codigo

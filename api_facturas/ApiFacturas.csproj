@@ -20,13 +20,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Los DOS paquetes externos de la v1 (y ninguno más):
+    <!-- Los paquetes externos de la v1 (y ninguno más):
          - Microsoft.Data.SqlClient: el cliente oficial de SQL Server
            para .NET (ADO.NET). Sin ORM: el SQL se escribe a mano y
            queda visible — decisión de la constitución.
          - Swashbuckle.AspNetCore: genera la documentación interactiva
            Swagger (/swagger) leyendo los controladores y sus clases de datos. -->
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+    <!-- Dapper: el MICRO-ejecutor — el SQL se sigue escribiendo a mano
+         y parametrizado; Dapper solo mapea fila→objeto (sin Entity
+         Framework: nada genera SQL por nosotros). -->
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 

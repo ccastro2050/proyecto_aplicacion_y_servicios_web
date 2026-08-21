@@ -118,7 +118,7 @@ proyecto_aplicacion_y_servicios_web/
 │                                #   los 13 endpoints en orden didáctico (alternativa a Swagger)
 │
 ├── api_facturas/                # LA API DE LA v1 — C#/ASP.NET Core (puerto 8032)
-│   ├── ApiFacturas.csproj       # El proyecto .NET (paquetes: SqlClient y Swashbuckle)
+│   ├── ApiFacturas.csproj       # El proyecto .NET (paquetes: SqlClient, Dapper y Swashbuckle)
 │   ├── Program.cs               # Punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
 │   ├── appsettings.json         # Cadena de conexión (default localhost,11463)
 │   ├── Dockerfile               # Imagen sdk:10.0 + dotnet watch

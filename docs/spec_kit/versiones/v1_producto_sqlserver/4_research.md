@@ -6,17 +6,46 @@
 
 ---
 
-## D1 — ADO.NET crudo: sin Entity Framework (ni Dapper)
+## D1 — El ejecutor de la capa de datos: Dapper (un ADR completo)
 
-**Alternativas descartadas:** Entity Framework Core (el ORM de .NET) y
-Dapper (micro-ORM).
-**Decisión:** `SqlConnection` + `SqlCommand` con SQL parametrizado a mano.
-**Por qué:** el objetivo es aprender **SQL y arquitectura**, no un ORM. EF
-esconde exactamente lo que el curso quiere mostrar (el SQL, el mapeo, las
-transacciones); Dapper es razonable pero igual tapa el ciclo
-conexión→comando→lector que un estudiante debe ver una vez en la vida.
-**Precio asumido:** más líneas por método del repositorio — cada una es
-lección.
+> Este documento funciona como registro de decisiones de arquitectura
+> (**ADR**, *Architecture Decision Record*): cada D# captura contexto →
+> opciones → criterios → decisión → consecuencias, y se versiona con el
+> código. Esta D1 es el ejemplo más completo del formato.
+
+**Contexto.** La capa de repositorios necesita (1) ejecutar SQL contra
+el motor y (2) mapear filas ↔ objetos del modelo. Restricción de la
+constitución (Art. 2): el SQL debe quedar VISIBLE en el código y SIEMPRE
+parametrizado.
+
+**Opciones evaluadas:** (a) Entity Framework Core (ORM de entidades) ·
+(b) **Dapper** (micro-ejecutor) · (c) ADO.NET "crudo"
+(`SqlConnection` + `SqlCommand` con el mapeo `GetString(0)` a mano).
+
+**Criterios de ingeniería y comparación:**
+
+| Criterio | EF Core | Dapper | ADO.NET crudo |
+|---|---|---|---|
+| SQL visible en el repositorio | ✗ (lo genera LINQ) | ✓ (se escribe a mano) | ✓ |
+| Parametrización (anti-inyección) | ✓ | ✓ (`@param`) | ✓ (`@param`) |
+| Rendimiento en lecturas | menor (tracking, traducción) | ≈ manual (mapeo con código emitido y CACHEADO) | máximo teórico |
+| Líneas por método del repositorio | pocas | pocas | muchas (ciclo conexión→comando→lector) |
+| Riesgo de abstracción con fuga | alto (N+1, tracking sorpresa) | bajo (no decide nada) | ninguno |
+| Dependencias | pesada | 1 paquete MIT, estable | ninguna |
+| Testabilidad de las capas | igual en las tres: la da la ARQUITECTURA (interfaces + repos falsos), no el ejecutor | | |
+
+**Decisión: (b) Dapper.** `QueryAsync<T>`/`ExecuteAsync` reciben el SQL
+escrito a mano; Dapper solo mapea columna→propiedad por nombre. EF queda
+descartado por el criterio 1 (esconde exactamente lo que la constitución
+exige ver); frente al crudo, Dapper empata en los criterios técnicos y
+gana en costo de código.
+
+**Consecuencias.** (+) Repositorios cortos y uniformes; el diseño queda
+más visible que el ritual de infraestructura. (+) Sin lock-in: quitar
+Dapper es volver a escribir el mapeo manual — el SQL no cambia. (−) El
+ciclo conexión→comando→lector no se practica aquí (quien quiera verlo lo
+tiene en los materiales del ecosistema del curso). (−) Una dependencia
+más, mitigada por licencia MIT y madurez del paquete.
 
 ## D2 — Capas completas desde el día 1 (y no un MVP en un solo archivo)
 
