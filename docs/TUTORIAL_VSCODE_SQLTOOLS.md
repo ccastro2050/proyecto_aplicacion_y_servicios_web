@@ -100,6 +100,36 @@ Así se ve el formulario completo, con las opciones del driver abajo
 
 ![Paso 1 — el formulario lleno con las opciones del driver](img_sqltools/paso01_formulario_lleno.png)
 
+> ### 🚨 ¿Le salió este error al probar la conexión?
+>
+> ```
+> Error opening connection Failed to connect to localhost:11463
+> - self signed certificate; if the root CA is installed locally,
+> try running Node.js with --use-system-ca
+> ```
+>
+> Es el certificado AUTOFIRMADO del contenedor: el driver exige cifrado
+> y no confía en él. La solución NO es el `--use-system-ca` que sugiere
+> el mensaje — es confiar en el certificado del contenedor:
+>
+> 1. Abra la conexión con el lápiz (**Edit connection**) y verifique que
+>    **`trustServerCertificate` esté MARCADO** (y `encrypt` también).
+>    Guarde con **Save Connection** y pruebe de nuevo.
+> 2. Si su versión del driver no muestra esa casilla, edítelo a mano:
+>    `Ctrl+Shift+P` → *Preferences: Open User Settings (JSON)* → busque
+>    `sqltools.connections` y asegúrese de que la conexión tenga:
+>
+>    ```json
+>    "mssqlOptions": {
+>      "encrypt": true,
+>      "trustServerCertificate": true
+>    }
+>    ```
+>
+> 3. Reintente el **TEST CONNECTION**. (Esto solo aplica al laboratorio:
+>    en un servidor real se instala un certificado válido en lugar de
+>    confiar a ciegas.)
+
 Abajo del formulario: **TEST CONNECTION** debe responder *"Successfully
 connected!"* en verde; luego **SAVE CONNECTION** y **CONNECT NOW**.
 
