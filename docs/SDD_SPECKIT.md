@@ -123,8 +123,8 @@ con el valor esperado al lado de cada comando:
 
 ```powershell
 docker compose up -d --build
-curl.exe http://localhost:8032/api/producto              # total: 8
-curl.exe -i http://localhost:8032/api/producto/PR999     # → 404
+curl.exe http://localhost:8036/api/producto              # total: 8
+curl.exe -i http://localhost:8036/api/producto/PR999     # → 404
 ```
 
 **`8_tasks.md` — el orden, por fases verificables.** Cada fase termina

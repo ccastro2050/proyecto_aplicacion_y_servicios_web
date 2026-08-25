@@ -1,6 +1,6 @@
 # Contratos HTTP — Versión 1: los 7 endpoints con formatos exactos
 
-> **Versión 1** · Base: `http://localhost:8032`. Estos contratos se cumplen
+> **Versión 1** · Base: `http://localhost:8036`. Estos contratos se cumplen
 > **al pie de la letra** (constitución, Artículo 7): mismos verbos, rutas,
 > códigos y formatos.
 

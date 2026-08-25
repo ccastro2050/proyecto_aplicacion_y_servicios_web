@@ -2,7 +2,7 @@
 # Proyecto Aplicación y Servicios Web — versión 1:
 # api_facturas (C#/ASP.NET Core) + SQL Server
 #
-#   Navegador → API FACTURAS (C#, :8032) → SQL Server (bdfacturas)
+#   Navegador → API FACTURAS (C#, :8036) → SQL Server (bdfacturas)
 #
 # Uso: docker compose up -d --build     (UN solo comando)
 # Reset de la BD: docker compose down -v && docker compose up -d
@@ -22,7 +22,7 @@ services:
     volumes:
       - mssqldata:/var/opt/mssql             # los datos sobreviven a `down`
     ports:
-      - "11463:1433"     # puerto en su PC (para SQLTools/SSMS opcional)
+      - "11467:1433"     # puerto en su PC (para SQLTools/SSMS opcional)
     healthcheck:
       # ¿La BD ya RESPONDE consultas? (no solo "el contenedor existe")
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b"]
@@ -56,7 +56,7 @@ services:
       - /app/obj                 #   sin mezclarse con los compilados de Windows
     restart: unless-stopped
     ports:
-      - "8032:8032"              # http://localhost:8032
+      - "8036:8036"              # http://localhost:8036
     environment:
       # La cadena usa el NOMBRE del servicio como host (sqlserver,1433),
       # no localhost: dentro de la red interna de compose los servicios

@@ -38,16 +38,16 @@ completa en SQL Server) y la API:
 
 | Qué | Dónde |
 |---|---|
-| **API Facturas** — diagnóstico | http://localhost:8032/ |
-| **Swagger** (documentación interactiva: ver y probar los endpoints) | http://localhost:8032/swagger |
-| Listar productos | http://localhost:8032/api/producto |
-| SQL Server (para SQLTools/SSMS, opcional) | `localhost,11463` · `sa`/`Paradigmas123!` |
+| **API Facturas** — diagnóstico | http://localhost:8036/ |
+| **Swagger** (documentación interactiva: ver y probar los endpoints) | http://localhost:8036/swagger |
+| Listar productos | http://localhost:8036/api/producto |
+| SQL Server (para SQLTools/SSMS, opcional) | `localhost,11467` · `sa`/`Paradigmas123!` |
 
 Pruebe la joya didáctica de la v1: PUT con solo `{"stock": 99}` → 422; el
 mismo body en PATCH → 200. Esa diferencia es parte de lo que enseña la
 versión (contratos exactos en el spec kit).
 
-> ℹ️ Este proyecto usa los puertos 8032 y 11463: si alguno ya está ocupado
+> ℹ️ Este proyecto usa los puertos 8036 y 11467: si alguno ya está ocupado
 > en su máquina, cámbielo en `docker-compose.yml` (el lado izquierdo del
 > `"puerto:puerto"`).
 >
@@ -117,10 +117,10 @@ proyecto_aplicacion_y_servicios_web/
 ├── postman/                     # La colección de Postman lista para importar:
 │                                #   los 13 endpoints en orden didáctico (alternativa a Swagger)
 │
-├── api_facturas/                # LA API DE LA v1 — C#/ASP.NET Core (puerto 8032)
+├── api_facturas/                # LA API DE LA v1 — C#/ASP.NET Core (puerto 8036)
 │   ├── ApiFacturas.csproj       # El proyecto .NET (paquetes: SqlClient, Dapper y Swashbuckle)
 │   ├── Program.cs               # Punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
-│   ├── appsettings.json         # Cadena de conexión (default localhost,11463)
+│   ├── appsettings.json         # Cadena de conexión (default localhost,11467)
 │   ├── Dockerfile               # Imagen sdk:10.0 + dotnet watch
 │   ├── Controllers/             # Capa 1 — HTTP: atributos de verbo y try/catch → códigos
 │   ├── Modelos/                 # Los MODELOS = las clases ENTIDAD (v1: Producto)

@@ -27,8 +27,8 @@
 └── api_facturas/
     ├── ApiFacturas.csproj            # el proyecto .NET (paquetes: SqlClient y Swashbuckle)
     ├── Program.cs                    # punto de entrada: ENSAMBLADOR (DI) + 422 + rutas
-    ├── appsettings.json              # cadena de conexión (default localhost:11463)
-    ├── Dockerfile                    # sdk:10.0 + dotnet watch (puerto 8032)
+    ├── appsettings.json              # cadena de conexión (default localhost:11467)
+    ├── Dockerfile                    # sdk:10.0 + dotnet watch (puerto 8036)
     ├── Modelos/
     │   └── Producto.cs               # el MODELO = la ENTIDAD: 4 propiedades tipadas
     ├── Peticiones/
@@ -152,8 +152,8 @@ cuando la BD ya existe con sus datos.
 ## 5. Docker: un solo comando desde v1
 
 La constitución (Artículo 4) manda: `docker compose up -d --build` deja TODO
-funcionando. En v1 eso son **tres servicios**: `sqlserver` (11463 al host),
-`sqlserver-init` (corre una vez) y `api-facturas` (8032, código montado +
+funcionando. En v1 eso son **tres servicios**: `sqlserver` (11467 al host),
+`sqlserver-init` (corre una vez) y `api-facturas` (8036, código montado +
 `dotnet watch`, `bin/` y `obj/` en volúmenes anónimos para no mezclar
 compilados de Linux con los de Windows). El detalle línea por línea está en
 el `docker-compose.yml` de la raíz, comentado.

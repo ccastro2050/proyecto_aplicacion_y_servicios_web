@@ -258,15 +258,15 @@ REGLAS DE TRABAJO (no negociables):
 8. En mi máquina TAMBIÉN corre el proyecto clonado del curso con sus
    puertos originales. Para que ambos convivan, MI proyecto:
    a. Publica los puertos del host con +100: en el docker-compose.yml la
-      API va "8132:8032" y SQL Server va "11563:1433" (adentro de los
+      API va "8136:8036" y SQL Server va "11567:1433" (adentro de los
       contenedores todo queda igual que en los documentos).
    b. El docker-compose.yml empieza con la línea `name: mi_v1_producto`
       (antes de services:) — así Docker lo trata como un proyecto
       distinto al del curso, con sus propios contenedores y volúmenes,
       aunque las carpetas se llamen parecido.
    La cadena de conexión por defecto de appsettings.json (para correr sin
-   Docker) apunta a localhost,11563. Cuando me des URLs o comandos de
-   prueba, usa localhost:8132 (API) y localhost,11563 (BD).
+   Docker) apunta a localhost,11567. Cuando me des URLs o comandos de
+   prueba, usa localhost:8136 (API) y localhost,11567 (BD).
 
 Al final, la versión 1 está TERMINADA solo cuando pasan los 6 criterios de
 aceptación de 2_spec.md, verificados con el smoke test de 7_quickstart.md.
@@ -290,8 +290,8 @@ que entendiste el alcance) y luego arranca con la Fase 0.
    en el chat CADA error tal cual salga (completo). La IA le entrega el
    archivo corregido, usted lo pega y repite hasta que los 6 criterios
    estén en verde. **Ojo con los puertos**: SU proyecto corre con +100
-   (regla 8 del prompt) — donde el quickstart diga `localhost:8032` use
-   `localhost:8132`, y donde diga `11463` use `11563`.
+   (regla 8 del prompt) — donde el quickstart diga `localhost:8036` use
+   `localhost:8136`, y donde diga `11467` use `11567`.
 4. **Si la IA se acelera** y entrega varios archivos de un tirón,
    recuérdele la regla 2b: "de a uno, espera mi listo".
 5. **Si la primera respuesta llega en OTRO lenguaje** (Python, Java, Node,
@@ -362,10 +362,10 @@ REGLAS (no negociables):
 4. Todo en español, C# sobre ASP.NET Core (.NET 10), con los comentarios
    didácticos que exige la constitución.
 5. En esta máquina TAMBIÉN corre el proyecto clonado del curso. MI proyecto
-   publica los puertos del host con +100 (API "8132:8032", SQL Server
-   "11563:1433") y su docker-compose.yml empieza con `name: mi_v1_producto`.
+   publica los puertos del host con +100 (API "8136:8036", SQL Server
+   "11567:1433") y su docker-compose.yml empieza con `name: mi_v1_producto`.
 6. Al final, corre el smoke test completo de 7_quickstart.md §2 (con mis
-   puertos: localhost:8132) y muéstrame la evidencia de los 6 criterios de
+   puertos: localhost:8136) y muéstrame la evidencia de los 6 criterios de
    aceptación de 2_spec.md. La versión no está terminada hasta que los 6
    estén en verde.
 ```

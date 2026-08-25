@@ -146,7 +146,7 @@ inexistente → 404.
 
 1. **`docker compose up -d --build` — un solo comando —** deja corriendo
    SQL Server (inicializado con el script provisto: 12 tablas), y la API;
-   `GET http://localhost:8032/` responde el JSON de diagnóstico. Guardar un
+   `GET http://localhost:8036/` responde el JSON de diagnóstico. Guardar un
    `.cs` recompila y reinicia solo (dotnet watch).
 2. `GET /api/producto` devuelve los 8 productos de ejemplo con
    `{tabla:"producto", total:8, datos:[…]}`, y `GET /api/producto?limite=3`

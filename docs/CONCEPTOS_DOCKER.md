@@ -93,7 +93,7 @@ usted no escribe los pasos, escribe el resultado (el mismo espíritu de SDD).
     volumes:
       - mssqldata:/var/opt/mssql     # volumen nombrado: los datos sobreviven
     ports:
-      - "11463:1433"                 # "puerto en su PC : puerto interno"
+      - "11467:1433"                 # "puerto en su PC : puerto interno"
     healthcheck:                     # ¿la BD ya RESPONDE consultas?
       test: ["CMD-SHELL", "…sqlcmd… -Q 'SELECT 1'…"]
 ```
@@ -126,7 +126,7 @@ el script y muere — un patrón de Docker que vale la pena conocer.
       - /app/bin                     # volúmenes anónimos: compilados de Linux
       - /app/obj                     #   sin mezclarse con los de Windows
     ports:
-      - "8032:8032"
+      - "8036:8036"
     environment:
       # El host es el NOMBRE del servicio (sqlserver), no localhost:
       ConnectionStrings__SqlServer: "Server=sqlserver,1433;…"
@@ -139,7 +139,7 @@ el script y muere — un patrón de Docker que vale la pena conocer.
 Las tres ideas que este archivo demuestra:
 
 1. **Dos redes de nombres**: hacia su PC, puertos publicados
-   (`localhost:8032`, `localhost,11463`); entre contenedores, nombres de
+   (`localhost:8036`, `localhost,11467`); entre contenedores, nombres de
    servicio (`sqlserver,1433`). El mismo motor tiene dos "direcciones"
    según quién lo llame.
 2. **Dependencias con condiciones**: `service_healthy` (el motor responde)

@@ -13,7 +13,7 @@
       escribe ni se genera con IA) e `init.sh` (el inicializador; ver
       [3_plan.md](3_plan.md) §4.6).
 - [ ] Crear el `docker-compose.yml` con los servicios `sqlserver` (imagen
-      2022, volumen `mssqldata`, puerto 11463, healthcheck con sqlcmd) y
+      2022, volumen `mssqldata`, puerto 11467, healthcheck con sqlcmd) y
       `sqlserver-init` (misma imagen, monta `./db`, corre `init.sh` y
       termina) — ver [3_plan.md](3_plan.md) §5. Levantar:
       `docker compose up -d`.
@@ -21,14 +21,14 @@
       `Servicios/`, `Repositorios/`, `Excepciones/` y `pruebas/`.
 
 **Verificar:** `docker compose ps -a` muestra `sqlserver (healthy)` y
-`sqlserver-init` en `Exited (0)`; un cliente SQL a `localhost:11463`
+`sqlserver-init` en `Exited (0)`; un cliente SQL a `localhost:11467`
 (usuario `sa`) ve las **12 tablas** y `SELECT count(*) FROM producto` da **8**.
 
 ## Fase 1 — El proyecto .NET y el modelo Producto (la clase entidad)
 - [ ] `ApiFacturas.csproj`: proyecto Web de .NET 10, paquete
       `Microsoft.Data.SqlClient`, y la exclusión de `pruebas/**`.
 - [ ] `appsettings.json` con la cadena de conexión (default
-      `localhost,11463` para correr sin Docker).
+      `localhost,11467` para correr sin Docker).
 - [ ] `Modelos/Producto.cs`: la clase entidad con las 4 propiedades
       tipadas `{ get; set; }` (`Codigo` string, `Nombre` string, `Stock`
       int, `Valorunitario` decimal). En C#, las propiedades SON los
@@ -87,9 +87,9 @@ con `errores[]`), y el contraste PUT vs PATCH con `{"stock": 99}` (422 vs
 
 ## Fase 6 — Docker: un solo comando
 - [ ] `api_facturas/Dockerfile`: imagen `dotnet/sdk:10.0`, `dotnet watch`,
-      `ASPNETCORE_URLS` en 8032, `DOTNET_USE_POLLING_FILE_WATCHER`.
+      `ASPNETCORE_URLS` en 8036, `DOTNET_USE_POLLING_FILE_WATCHER`.
 - [ ] Agregar al `docker-compose.yml` el servicio `api-facturas`: `build:`,
-      código montado + `bin/` y `obj/` en volúmenes anónimos, puerto 8032,
+      código montado + `bin/` y `obj/` en volúmenes anónimos, puerto 8036,
       variable `ConnectionStrings__SqlServer` con el host interno
       `sqlserver,1433`, y `depends_on` de `sqlserver-init` con
       `condition: service_completed_successfully`.

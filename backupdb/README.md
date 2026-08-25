@@ -47,7 +47,7 @@ docker compose cp backupdb/bdfacturas_sqlserver_2026-08-08.bak sqlserver:/tmp/re
 docker compose exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "Paradigmas123!" -C -Q "ALTER DATABASE bdfacturas_sqlserver_local SET SINGLE_USER WITH ROLLBACK IMMEDIATE; RESTORE DATABASE bdfacturas_sqlserver_local FROM DISK='/tmp/restore.bak' WITH REPLACE; ALTER DATABASE bdfacturas_sqlserver_local SET MULTI_USER;"
 ```
 
-Verifique: `http://localhost:8032/api/producto` debe mostrar los datos tal
+Verifique: `http://localhost:8036/api/producto` debe mostrar los datos tal
 como estaban cuando hizo el backup.
 
 ## Para probar el ciclo completo (ejercicio)

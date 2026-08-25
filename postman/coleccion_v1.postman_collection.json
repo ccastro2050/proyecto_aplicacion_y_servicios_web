@@ -1,11 +1,11 @@
 {
   "info": {
     "name": "API Facturas v1 (C# + SQL Server)",
-    "description": "Los endpoints de la v1 en orden didáctico: diagnóstico → lecturas → ciclo de escritura → la pareja PUT/PATCH → los errores. Cada petición explica en su descripción qué esperar. La variable {{base}} apunta al proyecto del curso (localhost:8032); para probar SU reconstrucción cámbiela a localhost:8132.",
+    "description": "Los endpoints de la v1 en orden didáctico: diagnóstico → lecturas → ciclo de escritura → la pareja PUT/PATCH → los errores. Cada petición explica en su descripción qué esperar. La variable {{base}} apunta al proyecto del curso (localhost:8036); para probar SU reconstrucción cámbiela a localhost:8136.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "base", "value": "http://localhost:8032" }
+    { "key": "base", "value": "http://localhost:8036" }
   ],
   "item": [
     {

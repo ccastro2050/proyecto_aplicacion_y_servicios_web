@@ -101,20 +101,20 @@ En la terminal de VS Code (PowerShell), con el proyecto corriendo:
 
 ```powershell
 # GET (el navegador también sirve para estos dos)
-Invoke-RestMethod "http://localhost:8032/api/producto"
-Invoke-RestMethod "http://localhost:8032/api/producto/PR001"
+Invoke-RestMethod "http://localhost:8036/api/producto"
+Invoke-RestMethod "http://localhost:8036/api/producto/PR001"
 
 # POST — crear
-Invoke-RestMethod -Method Post -Uri "http://localhost:8032/api/producto" -ContentType "application/json" -Body '{"codigo":"PR009","nombre":"Webcam","stock":10,"valorunitario":350000}'
+Invoke-RestMethod -Method Post -Uri "http://localhost:8036/api/producto" -ContentType "application/json" -Body '{"codigo":"PR009","nombre":"Webcam","stock":10,"valorunitario":350000}'
 
 # PUT con body incompleto → error 422 (PUT exige TODO)
-Invoke-RestMethod -Method Put -Uri "http://localhost:8032/api/producto/PR009" -ContentType "application/json" -Body '{"stock":25}'
+Invoke-RestMethod -Method Put -Uri "http://localhost:8036/api/producto/PR009" -ContentType "application/json" -Body '{"stock":25}'
 
 # PATCH con el MISMO body → 200 (PATCH es parcial)
-Invoke-RestMethod -Method Patch -Uri "http://localhost:8032/api/producto/PR009" -ContentType "application/json" -Body '{"stock":25}'
+Invoke-RestMethod -Method Patch -Uri "http://localhost:8036/api/producto/PR009" -ContentType "application/json" -Body '{"stock":25}'
 
 # DELETE — limpiar
-Invoke-RestMethod -Method Delete -Uri "http://localhost:8032/api/producto/PR009"
+Invoke-RestMethod -Method Delete -Uri "http://localhost:8036/api/producto/PR009"
 ```
 
 La pareja PUT/PATCH con el mismo body es la lección más importante del

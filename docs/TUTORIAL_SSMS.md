@@ -37,12 +37,12 @@ Para leer en esta pantalla:
 ## Paso 2 — Conectarse al SQL Server del proyecto
 
 El motor SQL Server corre dentro del contenedor `sqlserver` y está
-**publicado** en el puerto **11463** de su PC. En el diálogo **Conectar**
+**publicado** en el puerto **11467** de su PC. En el diálogo **Conectar**
 (pestaña *Connection Properties*) llene así:
 
 | Campo | Valor |
 |---|---|
-| **Server Name** | `localhost,11463` |
+| **Server Name** | `localhost,11467` |
 | Authentication | `Autenticación de SQL Server` (*SQL Server Authentication*) |
 | User Name | `sa` |
 | Password | `Paradigmas123!` |
@@ -63,7 +63,7 @@ Para leer en esta pantalla:
 
 Dos detalles que causan el 90 % de los fallos de conexión:
 
-- El puerto va con **COMA**, no con dos puntos: `localhost,11463`. Es la
+- El puerto va con **COMA**, no con dos puntos: `localhost,11467`. Es la
   sintaxis propia de SQL Server (a diferencia de las URL, que usan `:`).
 - **Trust server certificate** debe quedar marcado. Las versiones nuevas
   de SSMS exigen conexión cifrada por defecto, y el contenedor usa un
@@ -127,10 +127,10 @@ Para leer en esta pantalla:
   `[bdfacturas_sqlserver_local].[dbo].[producto]` (BD → esquema → tabla).
 - **Resultados** (abajo): los **8 productos de fábrica** (PR001–PR008)
   que sembró `db/bdfacturas.sql`. Compare con
-  `http://localhost:8032/api/producto`: es la MISMA información — una
+  `http://localhost:8036/api/producto`: es la MISMA información — una
   vista por SQL y otra por la API.
 - **La barra de estado** (abajo a la derecha) resume la sesión completa:
-  servidor `localhost,11463`, usuario `sa`, la BD y **8 filas**.
+  servidor `localhost,11467`, usuario `sa`, la BD y **8 filas**.
 
 También existe **Editar las 200 filas superiores** (*Edit Top 200
 Rows*): abre la tabla en modo edición, como una hoja de cálculo. Cambie
@@ -162,7 +162,7 @@ Para leer en esta pantalla:
 
 - El SELECT ahora trae **9 filas** (lo confirma la barra de estado):
   los 8 de fábrica más su `PR999` al final.
-- Véalo también por la otra puerta: `http://localhost:8032/api/producto`
+- Véalo también por la otra puerta: `http://localhost:8036/api/producto`
   muestra el mismo PR999 — SSMS y la API le hablan a la MISMA base de
   datos.
 - Un batch puede llevar varias sentencias: el INSERT y el SELECT se
