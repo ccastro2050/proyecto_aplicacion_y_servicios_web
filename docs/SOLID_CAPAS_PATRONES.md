@@ -276,7 +276,7 @@ implementación le tocó.
 | S | v1 (una clase por responsabilidad) | v2 (más entidades, mismas responsabilidades) |
 | O | v1 (la interfaz existe) | **v4** (segundo motor sin tocar lo construido) |
 | L | v1 (el repositorio falso de las pruebas) | v4 (motores intercambiables de verdad) |
-| I | v1 (interfaces mínimas) | v6 (la API genérica separa contratos por capacidad) |
+| I | v1 (interfaces mínimas) | v3 (los puentes: contratos sin verbos que no aplican) |
 | D | v1 (constructores reciben interfaces) | v4 (la fábrica reemplaza al ensamblador simple) |
 
 ## 5. Referencias

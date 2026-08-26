@@ -160,9 +160,7 @@ v1  api_facturas (C#/ASP.NET Core): CRUD de producto, solo SQL Server   ← USTE
 v2  más tablas (persona, factura maestro-detalle…)
 v3  segundo motor (PostgreSQL) — nace la fábrica de repositorios
 v4  tercer motor (MariaDB) + compose completo
-v5  API GENÉRICA de plataforma: /api/{tabla} multi-motor + JWT +
-    consultas parametrizadas + procedimientos almacenados
-v6  frontend BLAZOR: CRUD de las 12 entidades + login + facturación
+v5  frontend BLAZOR: CRUD de las 12 entidades + login + facturación
 ```
 
 La regla del juego: la **constitución** es permanente, cada versión tiene

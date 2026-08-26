@@ -8,7 +8,7 @@
 # Reset de la BD: docker compose down -v && docker compose up -d
 #
 # Este archivo CRECE por versiones: v3 suma un segundo motor,
-# v5 la API genérica, v6 el front Blazor.
+# v5 el front Blazor.
 # ==============================================================
 services:
 
