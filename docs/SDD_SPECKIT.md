@@ -5,6 +5,44 @@
 
 ---
 
+## 🎬 Antes de leer: el video del método
+
+[![Video: Spec Kit de GitHub — el desarrollo guiado por especificaciones está matando al vibe coding](https://img.youtube.com/vi/_MmsQMLg6yU/maxresdefault.jpg)](https://youtu.be/_MmsQMLg6yU)
+
+> **▶️ [Spec Kit de GitHub: cómo el SDD está matando al "vibe coding"](https://youtu.be/_MmsQMLg6yU)**
+> — episodio del podcast *BIM Praxis* (~16 min; voces generadas con
+> NotebookLM). Cuenta, con otras palabras, EXACTAMENTE el método de este
+> repositorio. **Resumen:**
+>
+> 1. **El "vibe coding" no tiene cimientos:** pedirle a la IA "hazme una
+>    app" en dos líneas parece magia las primeras iteraciones, pero a la
+>    tercera o cuarta el proyecto colapsa — dependencias circulares,
+>    lógica destrozada. La causa técnica es la **degradación del
+>    contexto**: el modelo prioriza lo último que usted dijo y pierde la
+>    estrategia global.
+> 2. **La constitución es el ancla:** un archivo con las leyes
+>    innegociables del proyecto que se inyecta en CADA llamada a la IA.
+>    Neutraliza el sesgo estadístico del modelo ("a la mínima te quiere
+>    meter un React y una base de datos") y bloquea lo prohibido aunque
+>    la conversación sea larga.
+> 3. **La spec define el QUÉ sin tecnología** (historias de usuario y
+>    criterios de aceptación), y la IA no asiente como un ejecutor
+>    servicial: busca ambigüedades y casos límite que usted no pensó —
+>    se pone la gorra de arquitecto.
+> 4. **El plan y las tareas** convierten la spec en arquitectura técnica
+>    y en un grafo de dependencias (qué depende de qué, qué puede ir en
+>    paralelo), con la disciplina de escribir la prueba ANTES del código.
+> 5. **El código pasa a ser un subproducto:** si toda la lógica vive en
+>    los `.md`, cambiar de stack es regenerar — lo que vale oro es la
+>    especificación. La competencia clave del profesional deja de ser
+>    memorizar sintaxis y pasa a ser **claridad de pensamiento
+>    estructural**: definir arquitecturas y comunicarse sin ambigüedades.
+>
+> **La traducción a este repositorio:** la "constitución" del video es
+> nuestro `1_constitution.md`; su *specify* es `2_spec.md` (con historias
+> y criterios de aceptación); su *plan* es `3_plan.md`; sus *tasks* son
+> `8_tasks.md` con las fases verificables. Usted ya está trabajando así.
+
 ## 1. El problema que ataca SDD
 
 El vicio clásico: escribir código primero y documentar después (o nunca).
