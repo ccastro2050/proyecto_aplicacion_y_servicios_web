@@ -72,6 +72,24 @@ Dockerfile   →  IMAGEN      →  CONTENEDOR   →  VOLUMEN
              docker build    docker run       -v / volumes
 ```
 
+> **La sorpresa que confunde a todo el mundo:** el volumen sobrevive
+> INCLUSO a borrar la carpeta del proyecto. Si usted borra la carpeta,
+> vuelve a hacer `git clone` y ejecuta `docker compose up -d --build`,
+> la BD arranca **con los datos de la última vez** — no con las semillas.
+> ¿Por qué? El volumen no vive en la carpeta: vive en el área de Docker,
+> identificado por el nombre del proyecto compose (= el nombre de la
+> carpeta). Misma carpeta → mismo nombre → mismo volumen de siempre.
+>
+> | Comando | ¿Y los datos? |
+> |---|---|
+> | `docker compose up -d --build` | Se conservan |
+> | `docker compose down` | Se conservan |
+> | borrar la carpeta y re-clonar | **Se conservan** (el volumen no estaba ahí) |
+> | `docker compose down -v` | **SE BORRAN** — el único que resetea |
+>
+> Para una demo con las semillas exactas:
+> `docker compose down -v` y luego `docker compose up -d --build`.
+
 ## 5. Docker Compose (el "un solo comando" del proyecto)
 
 **Compose** es la respuesta **declarativa** a "¿cómo levanto varios
