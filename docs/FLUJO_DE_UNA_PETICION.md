@@ -80,6 +80,30 @@ método del controller, que la traduce a un código HTTP:
 | El código no existe en la tabla | `NoEncontradoExcepcion` | **404** |
 | La BD rechazó (código duplicado, conexión caída…) | `SqlException` u otra | **500** |
 
+
+**El mismo viaje, como diagrama de flujo** — fíjese en que la gracia son
+las SALIDAS TEMPRANAS: cada capa puede terminar la película sin molestar a
+las de abajo:
+
+```mermaid
+flowchart TD
+    A["1. Kestrel recibe el texto HTTP"] --> B["2. ASP.NET Core (enrutamiento) encuentra<br/>(POST, /api/producto) en la tabla de rutas"]
+    B --> C{"3. ¿el body cumple las anotaciones<br/>de ProductoCrear? ([Required], [Range])"}
+    C -->|"NO"| E422["422 con la lista de errores<br/>AQUÍ TERMINA: su código de negocio<br/>nunca se enteró"]
+    C -->|"sí"| D["4. el controlador (con su try/catch)"]
+    D --> E["5. el SERVICIO: reglas de negocio<br/>(no conoce HTTP)"]
+    E -->|"regla rota: ArgumentException"| E400["400 {estado, mensaje, detalle}"]
+    E -->|"pasa"| F["6. el REPOSITORIO:<br/>INSERT parametrizado (@codigo, ...)"]
+    F --> G{"7. ¿la base de datos aceptó?"}
+    G -->|"PK duplicada · NOT NULL ·<br/>conexión caída"| E500["500 con el error del motor en detalle"]
+    G -->|"sí"| OK["8. la respuesta SUBE por las mismas capas:<br/>200 {estado, mensaje}"]
+```
+
+**Guía de lectura:** el camino feliz es la columna del centro; cada rombo
+es una defensa y cada salida lateral, un código HTTP distinto. Por eso el
+error también es contrato: se sabe QUIÉN lo decide (la frontera → 422, el
+servicio → 400, la BD → 500) y QUIÉN le pone el número (el controlador).
+
 ## 4. El viaje de un GET (más corto: no hay body ni validación de forma)
 
 `GET /api/producto/PR001`:
@@ -93,6 +117,17 @@ método del controller, que la traduce a un código HTTP:
 4. Repositorio        SELECT ... WHERE codigo = @codigo
 5. La fila vuelve convertida en objeto Producto y sale como JSON
    (el serializador convierte las propiedades públicas automáticamente)
+```
+
+
+**Y el del GET, en diagrama de flujo** (la defensa aquí es una sola: ¿existe?):
+
+```mermaid
+flowchart LR
+    A["GET /api/producto/PR001"] --> B["controlador"] --> S["servicio"] --> R["repositorio:<br/>SELECT ... WHERE codigo = @codigo"]
+    R --> E{"¿hay fila?"}
+    E -->|"sí"| OK["200: el producto en JSON"]
+    E -->|"no"| N["el servicio lanza<br/>'no existe' (NoEncontradoExcepcion)"] --> C404["el controlador la traduce: 404"]
 ```
 
 ## 5. Véalo usted mismo (5 minutos)
