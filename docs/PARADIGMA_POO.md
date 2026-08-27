@@ -167,11 +167,11 @@ public class Gato : Animal
 
 ```mermaid
 classDiagram
-    Animal <|-- Perro : hereda y SOBRESCRIBE hablar()
-    Animal <|-- Gato : hereda y SOBRESCRIBE hablar()
-    class Animal { +hablar() "..." }
-    class Perro { +hablar() "Guau" }
-    class Gato { +hablar() "Miau" }
+    Animal <|-- Perro : hereda y SOBRESCRIBE
+    Animal <|-- Gato : hereda y SOBRESCRIBE
+    class Animal { +hablar() base }
+    class Perro { +hablar() Guau }
+    class Gato { +hablar() Miau }
 ```
 
 **Cara B — la de ESTE proyecto: contrato + implementaciones.** Aquí NO hay
@@ -229,9 +229,9 @@ classDiagram
     direction LR
     class ServicioMal["ServicioProducto ❌"]
     class ServicioBien["ServicioProducto ✅"]
-    ServicioMal --|> RepositorioProductoSqlServer : hereda del CONCRETO: quedó casado con SQL Server
-    ServicioBien o-- IRepositorioProducto : compone la ABSTRACCIÓN: cualquier motor entra
-    NoEncontradoExcepcion --|> Exception : herencia LEGÍTIMA (es-un)
+    ServicioMal --|> RepositorioProductoSqlServer : hereda del CONCRETO — quedó casado con SQL Server
+    ServicioBien o-- IRepositorioProducto : compone la ABSTRACCIÓN — cualquier motor entra
+    NoEncontradoExcepcion --|> Exception : herencia LEGÍTIMA — es-un
 ```
 
 **Guía de lectura:** si el servicio HEREDA del repositorio concreto, cambiar
