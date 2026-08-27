@@ -93,48 +93,93 @@ filasAfectadas; inexistente → 404; body vacío → 400.
    mientras el mismo body en `PATCH` responde 200 (parcial).
 ```
 
-### 2.1 Cada documento por dentro (un ejemplo corto de cada uno)
+### 2.1 Los 8 documentos: qué es, para qué sirve y cómo se hace cada uno
 
-**`1_constitution.md` — la ley.** Artículos numerados que ninguna versión
-puede violar; si algo "exige" romper uno, esa es una discusión mayor que
-queda registrada:
+**1. `1_constitution.md` — la ley permanente.**
+**Qué es:** los artículos innegociables del proyecto; se escribe UNA vez y
+rige TODAS las versiones (en Spec Kit lo genera `/speckit.constitution`;
+aquí se escribe a mano).
+**Para qué sirve:** ancla el proyecto — y a la IA. Cuando alguien (humano o
+agente) proponga "metamos tal cosa", la constitución responde ANTES de
+discutir; por eso neutraliza el sesgo del modelo hacia lo que más vio en su
+entrenamiento.
+**Cómo se hace:** liste las decisiones que NO van a cambiar en el semestre
+(capas, seguridad, idioma, forma de cerrar versiones); redáctelas como
+artículos numerados, cortos y verificables; si un artículo no se puede
+violar "por accidente", no necesita estar.
 
 ```markdown
 ## Artículo 3 — SQL siempre parametrizado
-Los valores viajan como @parametros; JAMÁS se concatenan en el SQL.
+Los valores viajan como @parametros de Dapper; JAMÁS se concatenan
+en el SQL. `$"WHERE codigo = '{codigo}'"` es inyección esperando turno.
 ```
 
-**`2_spec.md` — el QUÉ.** Requisitos y criterios que se pueden VERIFICAR
-(nada de "debe ser fácil de usar"):
+**2. `2_spec.md` — el QUÉ.**
+**Qué es:** la especificación funcional de UNA versión: propósito, alcance,
+requisitos funcionales (RF numerados) y criterios de aceptación.
+**Para qué sirve:** define "terminada" de forma MEDIBLE — es el documento
+que se le entrega a la IA o al estudiante para construir la versión, y el
+que decide si pasó o no.
+**Cómo se hace:** propósito en dos frases; RFs numerados SIN tecnología
+(qué, no cómo); por cada RF, criterios con valores concretos (cuántas
+filas, qué código HTTP, qué mensaje); y un "NO incluye" explícito — frena
+la anticipación, que es el vicio favorito de la IA.
 
 ```markdown
+### RF5 — Actualizar parcialmente (PATCH + body parcial)
+PATCH /api/producto/{codigo} con campos opcionales: solo se
+modifican los enviados. Inexistente → 404; body vacío → 400.
+
 ## Criterios de aceptación
-2. GET /api/producto responde los 8 productos semilla (total: 8).
-3. GET /api/producto/PR999 responde 404 con {estado, mensaje, detalle}.
+4. Un PUT sin el campo nombre responde 422 (reemplazo completo)
+   mientras el MISMO body en PATCH responde 200 (parcial).
 ```
 
-**`3_plan.md` — el CÓMO.** El inventario y el diseño ANTES de escribir
-código — incluida la lista de archivos existentes que crecen:
+**3. `3_plan.md` — el CÓMO.**
+**Qué es:** la traducción técnica de la spec: stack, inventario de archivos
+y diseño de capas ya aterrizado a código.
+**Para qué sirve:** que la arquitectura no se decida "sobre la marcha"
+mientras se programa; una IA con plan no inventa estructura.
+**Cómo se hace:** estructura de carpetas; tabla de archivos NUEVOS con su
+papel; tabla de archivos que CRECEN y qué les crece (los intocables también
+se declaran); y las decisiones de diseño de la versión — en la familia
+diseño, con sus diagramas Mermaid.
 
 ```markdown
 **Crecen (los únicos existentes que se tocan):**
 | Archivo | Qué crece |
 |---|---|
 | `Program.cs` | ★ dos AddScoped nuevos (la rebanada persona) |
+| `ApiFacturas.csproj` | ★ un paquete nuevo, si la versión lo exige |
 ```
 
-**`4_research.md` — el PORQUÉ.** Cada decisión con lo que se descartó:
+**4. `4_research.md` — el PORQUÉ.**
+**Qué es:** el registro de decisiones (D1, D2…) con sus alternativas
+descartadas — lo que la industria llama ADRs (Architecture Decision
+Records).
+**Para qué sirve:** memoria del proyecto: no se re-discute lo decidido, y
+quien llegue después (incluida la IA) entiende por qué el sistema es así y
+no de otra forma.
+**Cómo se hace:** por cada decisión: contexto (el problema) → opciones
+consideradas (a, b, c) → decisión con su razón → consecuencias que se
+aceptan. Se escribe CUANDO se decide, no semanas después.
 
 ```markdown
 ## D4 — ¿Por qué PUT y PATCH separados?
-**Alternativas:** (a) un solo endpoint de "actualizar" · (b) PUT
+**Alternativas:** (a) un solo endpoint "actualizar" · (b) PUT
 (reemplazo completo) y PATCH (parcial) con peticiones distintas.
 **Decisión: (b)** — la pareja enseña la semántica HTTP: el MISMO
 body da 422 en PUT y 200 en PATCH.
 ```
 
-**`5_data_model.md` — los datos y sus fronteras.** Qué hay, y qué es
-territorio de la BD:
+**5. `5_data_model.md` — los datos y sus fronteras.**
+**Qué es:** las tablas, columnas, llaves y semillas que ESTA versión usa, y
+la frontera de responsabilidades entre la API y la BD.
+**Para qué sirve:** evita el clásico "la API recalcula lo que la BD ya
+calcula" — deja escrito qué columnas tiene PROHIBIDO tocar la API.
+**Cómo se hace:** tabla por tabla (columna, tipo, regla); anote qué escribe
+la BD sola (defaults, autonuméricos, triggers); semillas con valores
+EXACTOS, porque el smoke test depende de ellas.
 
 ```markdown
 | Tabla | PK | Semilla |
@@ -145,8 +190,15 @@ El stock lo mueve el TRIGGER al facturar: la API tiene PROHIBIDO
 escribirlo directamente.
 ```
 
-**`6_contracts.md` — el contrato exacto.** Endpoint por endpoint, con
-todos los desenlaces posibles:
+**6. `6_contracts.md` — el contrato HTTP exacto.**
+**Qué es:** endpoint por endpoint: verbo, URL, body de ejemplo y TODOS los
+códigos de respuesta con su JSON exacto.
+**Para qué sirve:** es lo que un cliente (el front futuro, Postman, el
+profesor) puede EXIGIR sin leer el código; al cerrar la versión, estos
+contratos se congelan.
+**Cómo se hace:** un bloque por endpoint; incluya los desenlaces de ERROR
+(404, 422, 500) con su formato — el error también es contrato; los valores
+de ejemplo salen de las semillas del 5_data_model.
 
 ```markdown
 POST /api/producto
@@ -156,28 +208,44 @@ body { "codigo": "PR009", "nombre": "Webcam", "stock": 10,
   errores[]) · 500 si el código ya existe (PK duplicada, en detalle)
 ```
 
-**`7_quickstart.md` — la validación en minutos.** Arrancar y comprobar,
-con el valor esperado al lado de cada comando:
+**7. `7_quickstart.md` — la validación en minutos.**
+**Qué es:** el arranque en un comando más el smoke test: la lista de
+comandos que recorre los criterios de aceptación con el valor esperado al
+lado de cada uno.
+**Para qué sirve:** "me funciona" deja de ser una opinión — cualquiera
+valida la versión en minutos; y en las versiones siguientes se convierte en
+la REGRESIÓN (lo viejo debe seguir pasando).
+**Cómo se hace:** el comando de arranque; un comando por criterio, en
+orden, con el resultado esperado como comentario; y una tabla "Si algo
+falla" con las causas probables.
 
-```powershell
-docker compose up -d --build
-curl.exe http://localhost:8036/api/producto              # total: 8
-curl.exe -i http://localhost:8036/api/producto/PR999     # → 404
+```bash
+curl http://localhost:8036/api/producto        # total: 8
+curl -i http://localhost:8036/api/producto/PR999   # → 404
 ```
 
-**`8_tasks.md` — el orden, por fases verificables.** Cada fase termina
-en un estado comprobable:
+**8. `8_tasks.md` — el orden, por fases verificables.**
+**Qué es:** el plan de construcción dividido en fases, cada una con su
+lista de tareas y su compuerta "**Verificar:**".
+**Para qué sirve:** convierte el plan en un camino sin saltos: la compuerta
+impide avanzar con una fase rota — es la versión artesanal del grafo de
+dependencias que `/speckit.tasks` genera.
+**Cómo se hace:** ordene de lo que no depende de nada hacia lo que depende
+de todo (modelo → repositorio → servicio → controlador); cada fase termina
+en un estado COMPROBABLE (`dotnet build`); la verificación se escribe
+como comando concreto, no como "revisar que funcione".
 
 ```markdown
 ## Fase 2 — El modelo y las peticiones
 - [ ] Modelos/Producto.cs (la entidad: 4 propiedades tipadas)
 - [ ] Peticiones/ProductoCrear.cs (todo obligatorio, con [Required])
+
 **Verificar:** `dotnet build` compila sin errores.
 ```
 
-La regla que une a los ocho: **si está en la spec y no en el código, el
+**La regla que une a los ocho:** si está en la spec y no en el código, el
 código está incompleto; si está en el código y no en la spec, sobra — o
-falta especificarlo.**
+falta especificarlo.
 
 **El ciclo de una versión:** leer la spec → seguir las tareas fase por
 fase → correr el quickstart → si los criterios pasan, commit + tag (`v1`) →
