@@ -239,7 +239,14 @@ de motor exige tocar el servicio (y probar sin BD es imposible). Si lo
 COMPONE a través de la interfaz, el motor se cambia por fuera — esa
 decisión de un solo rombo es la que paga todo el proyecto.
 
-**"Objetos que se mandan mensajes" (Alan Kay) — la v1 como conversación:**
+**"Objetos que se mandan mensajes" — la v1 como conversación.**
+¿Quién es **Alan Kay**? El científico que ACUÑÓ el término "orientado a
+objetos": creó Smalltalk en Xerox PARC (años 70) y recibió el premio
+Turing (2003). Y dijo algo sorprendente: se arrepentía de haberlo llamado
+"objetos", porque *"la gran idea es el ENVÍO DE MENSAJES"* — cada objeto
+es una cajita cerrada que recibe un mensaje, lo resuelve por dentro como
+quiera y responde, sin que el remitente sepa CÓMO. En la práctica, cada
+llamada a un método ES un mensaje. Mire la v1 con esos ojos:
 
 ```mermaid
 sequenceDiagram
