@@ -87,6 +87,50 @@ La prueba viviente en la v1: `pruebas/` corre el servicio real con un
 repositorio falso en memoria — sin BD. Eso solo es posible porque las capas
 están bien cortadas.
 
+### 1.1 ¿Y los MODELOS? ¿Por qué no aparecen como capa?
+
+Pregunta legítima: la carpeta de modelos (`Modelos/Producto.cs`) existe en el
+proyecto, pero la tabla de capas no la menciona. ¿Se olvidó? No — **el
+modelo NO es una capa, y la diferencia ES la lección:**
+
+- Las **capas son las ESTACIONES del viaje**: cada una le HACE algo a la
+  petición (el controller traduce HTTP, el servicio decide, el
+  repositorio consulta).
+- El **modelo es LO QUE VIAJA entre estaciones**: el repositorio arma un
+  `Producto` desde la fila, el servicio lo razona, el controller lo
+  vuelve JSON. No procesa nada: ES el paquete. Por eso el diagrama de
+  palitos no lo pinta como caja — el modelo va implícito en las flechas.
+
+```mermaid
+flowchart LR
+    subgraph CAPAS["Las ESTACIONES (sí son capas)"]
+        C["Controller<br/>(HTTP)"] --> S["Servicio<br/>(negocio)"] --> R["Repositorio<br/>(datos)"]
+    end
+    M["MODELO Producto<br/>el paquete que viaja"]
+    C -.->|"lo conoce"| M
+    S -.->|"lo conoce"| M
+    R -.->|"lo conoce"| M
+    M -.->|"y él NO conoce a NADIE:<br/>ni HTTP, ni SQL, ni framework"| NADA(( ))
+```
+
+**Guía de lectura:** las tres estaciones lo conocen y él no conoce a
+ninguna — a eso se le llama un elemento **transversal**. No viola la regla
+de dependencias ("cada capa solo conoce a la de abajo") porque conocer un
+modelo no acopla a nada: el modelo no arrastra dependencias, solo trae
+datos con tipos.
+
+**¿Entonces para qué se necesita?** Es el **idioma común** del sistema —
+el contrato interno entre capas. Sin modelo, las capas se pasarían
+diccionarios sueltos sin tipos, y el error de escribir `stok` en vez de
+`stock` no lo atraparía nadie hasta producción. Con modelo, lo atrapa el
+lenguaje. En C#, además, `Modelos/` (la entidad) convive con `Peticiones/` (los
+DTO por verbo): la entidad es el dato como ES; la petición, como LLEGA —
+la distinción completa está en [PARADIGMA_POO.md](PARADIGMA_POO.md) §3.
+
+**La regla del modelo** (tan estricta como las de las capas): el modelo
+tiene PROHIBIDO importar cosas del proyecto — ni HTTP, ni SQL, ni
+conexiones. Sus flechas de dependencia solo ENTRAN; jamás SALEN.
+
 ## 2. Los 5 principios SOLID, uno por uno
 
 ### S — Responsabilidad única (Single Responsibility)
