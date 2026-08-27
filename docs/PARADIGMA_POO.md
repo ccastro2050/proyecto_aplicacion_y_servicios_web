@@ -18,6 +18,54 @@ C# es un lenguaje **orientado a objetos de nacimiento**: todo el código
 vive en clases, y el framework (ASP.NET Core) está construido sobre estas
 ideas — por eso este curso ES un curso de P.O.O. aplicada.
 
+### 1.1 El MISMO problema en tres paradigmas (ejemplo comparado)
+
+Problema: calcular cuánto vale el inventario (la suma de stock × valor de
+cada producto). Mírelo tres veces:
+
+```
+// IMPERATIVO: el CÓMO, paso a paso (así se ve DENTRO de un método)
+decimal total = 0;
+foreach (var p in productos)
+    if (p.Stock > 0)
+        total += p.Stock * p.Valorunitario;
+```
+
+```sql
+-- DECLARATIVO: el QUÉ, sin pasos — el motor decide el CÓMO
+SELECT SUM(stock * valorunitario) FROM producto WHERE stock > 0;
+```
+
+```
+// P.O.O.: objetos que colaboran — cada uno con SU responsabilidad
+IServicioProducto servicio = new ServicioProducto(new RepositorioProductoSqlServer(cadena));
+var total = await servicio.ValorInventarioAsync();  // el servicio le PIDE al repositorio;
+                                                    // nadie de afuera ve SQL ni conexiones
+```
+
+Los tres resuelven lo mismo. La diferencia es QUIÉN carga con el detalle:
+en el imperativo usted; en el declarativo el motor; en la P.O.O. cada
+objeto carga con SU parte — y eso es lo que permite cambiar una pieza sin
+tocar las demás.
+
+### 1.2 Dónde vive cada paradigma en ESTE proyecto (Mermaid)
+
+```mermaid
+flowchart TB
+    subgraph PROY["El proyecto api_facturas — multiparadigma a propósito"]
+        ARQ["La ARQUITECTURA<br/>capas · interfaces · objetos que colaboran<br/>═ P.O.O. ═"]
+        MET["DENTRO de cada método<br/>if · for · asignaciones<br/>═ imperativo/estructurado ═"]
+        DECL["El SQL y los modelos de validación<br/>SELECT ... WHERE · reglas de campos<br/>═ declarativo ═"]
+    end
+    ARQ -->|"cada método se escribe con"| MET
+    ARQ -->|"la frontera y los datos se declaran con"| DECL
+```
+
+**Guía de lectura:** los paradigmas no compiten — conviven por niveles. La
+P.O.O. organiza el edificio; el imperativo pone los ladrillos dentro de
+cada método; el declarativo describe datos y consultas. Saber CUÁL usar en
+cada nivel es la competencia, no militar en uno.
+
 ## 2. Los 4 pilares, con su ejemplo en este proyecto
 
 ### Encapsulamiento
@@ -54,6 +102,84 @@ Quedarse con lo esencial y esconder el detalle. Las **interfaces**
 (`IServicioProducto`, `IRepositorioProducto`) son abstracción pura: declaran
 QUÉ se puede hacer sin una línea de CÓMO. El controlador depende de la
 abstracción, no del detalle.
+
+### 2.5 Los cuatro pilares, dibujados sobre la v1 (Mermaid)
+
+```mermaid
+classDiagram
+    class IRepositorioProducto {
+        <<interface>>
+        +obtener_todos(limite)
+        +obtener_por_codigo(codigo)
+        +crear(datos)
+        +actualizar(codigo, datos)
+        +eliminar(codigo)
+    }
+    class RepositorioProductoSqlServer {
+        -cadena de conexión (privada)
+        -el SQL parametrizado (privado)
+    }
+    class RepositorioFalsoEnMemoria {
+        -un diccionario en RAM
+    }
+    class ServicioProducto {
+        -repositorio: IRepositorioProducto
+        +reglas de negocio (límite mayor que 0, ...)
+    }
+    RepositorioProductoSqlServer ..|> IRepositorioProducto : POLIMORFISMO
+    RepositorioFalsoEnMemoria ..|> IRepositorioProducto : POLIMORFISMO
+    ServicioProducto o-- IRepositorioProducto : COMPOSICIÓN (recibe, no hereda)
+    note for IRepositorioProducto "ABSTRACCIÓN: declara QUÉ,\nni una línea de CÓMO"
+    note for RepositorioProductoSqlServer "ENCAPSULAMIENTO: la conexión\ny el SQL no salen de aquí"
+```
+
+**Guía de lectura:** los cuatro pilares están en UN dibujo. La interfaz es
+la abstracción; los atributos privados del repositorio son el
+encapsulamiento; las dos flechas punteadas que llegan a la misma interfaz
+son el polimorfismo (piezas intercambiables); y el rombo del servicio es
+composición: recibe el repositorio por constructor en vez de heredarlo — la herencia buena de la v1 es
+`NoEncontradoExcepcion : Exception`: una excepción CON nombre propio ES
+una excepción.
+
+**Herencia vs composición — el error clásico, dibujado:**
+
+```mermaid
+classDiagram
+    direction LR
+    class ServicioMal["ServicioProducto ❌"]
+    class ServicioBien["ServicioProducto ✅"]
+    ServicioMal --|> RepositorioProductoSqlServer : hereda del CONCRETO: quedó casado con SQL Server
+    ServicioBien o-- IRepositorioProducto : compone la ABSTRACCIÓN: cualquier motor entra
+    NoEncontradoExcepcion --|> Exception : herencia LEGÍTIMA (es-un)
+```
+
+**Guía de lectura:** si el servicio HEREDA del repositorio concreto, cambiar
+de motor exige tocar el servicio (y probar sin BD es imposible). Si lo
+COMPONE a través de la interfaz, el motor se cambia por fuera — esa
+decisión de un solo rombo es la que paga todo el proyecto.
+
+**"Objetos que se mandan mensajes" (Alan Kay) — la v1 como conversación:**
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Cli as Cliente HTTP
+    participant C as ProductoController
+    participant S as ServicioProducto
+    participant R as IRepositorioProducto (interface)
+    participant BD as SQL Server
+    Cli->>C: POST /api/producto (JSON)
+    C->>S: crear(petición ya validada)
+    S->>R: crear(datos)
+    Note over R: aquí responde QUIEN esté detrás de la interfaz:<br/>el repositorio SQL Server real o el falso en memoria
+    R->>BD: INSERT parametrizado
+    BD-->>Cli: y la respuesta se devuelve por la misma cadena
+```
+
+**Guía de lectura:** cada flecha es un MENSAJE entre objetos — ninguno sabe
+CÓMO trabaja el siguiente, solo QUÉ mensaje entiende. Esa era la idea
+original de Alan Kay al acuñar "orientado a objetos": menos árboles de
+herencia, más objetos conversando.
 
 ## 3. ¿Qué es un modelo? (y qué son las peticiones)
 
