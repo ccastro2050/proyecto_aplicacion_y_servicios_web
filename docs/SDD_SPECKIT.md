@@ -257,6 +257,14 @@ solo entonces se escribe la spec de la siguiente versión.
    dice, sobra; si la spec pide algo que el código no hace, falta.
 2. **No se anticipa** (YAGNI): la v1 no construye nada de la v3 "por si
    acaso". Cada versión introduce SU contenido cuando le toca.
+   **YAGNI** son las siglas de *You Aren't Gonna Need It* — "no lo vas a
+   necesitar": no se agrega una funcionalidad ni una línea de código hasta
+   que hoy haga falta. No es pereza: lo que se escribe "por si acaso" hay
+   que mantenerlo, probarlo y explicarlo desde el primer día, casi siempre
+   adivinando mal la necesidad futura. Aquí la disciplina tiene además una
+   consecuencia práctica: es lo que hace que cada versión sea pequeña y
+   verificable — y es la regla que una IA rompe primero, porque su sesgo
+   es agregar de más.
 3. **Cerrado es cerrado:** una versión con tag no se reabre; los ajustes
    van a la siguiente (y se anotan como "deuda de spec" si aplica).
 4. **Autocontenido:** el spec kit debe bastar para reconstruir la versión

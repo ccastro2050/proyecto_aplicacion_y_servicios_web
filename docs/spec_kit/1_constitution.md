@@ -13,9 +13,10 @@
   una con su spec kit propio (documentos 2 a 8). Una versión está TERMINADA
   solo cuando pasa sus criterios de aceptación; entonces se hace commit,
   **tag** (`v1`, `v2`, …) y solo después se escribe la spec siguiente.
-- **No se anticipa** (YAGNI): nada de fábricas multi-motor, capas "por si
-  acaso" ni tablas de más antes de la versión que las pida. El código de
-  cada versión solo puede nombrar lo que su spec nombra.
+- **No se anticipa** (**YAGNI**, *You Aren't Gonna Need It* — "no lo vas a
+  necesitar"): nada de fábricas multi-motor, capas "por si acaso" ni tablas
+  de más antes de la versión que las pida. El código de cada versión solo
+  puede nombrar lo que su spec nombra.
 - El repositorio siempre contiene la **versión en curso, funcionando**.
 
 ## Artículo 2 — Stack: C# y ASP.NET Core, con el SQL a la vista
