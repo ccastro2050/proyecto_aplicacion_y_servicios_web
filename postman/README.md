@@ -29,7 +29,7 @@ explicación en la pestaña de descripción.
 
 La colección usa la variable `base` = `http://localhost:8036` (el proyecto
 del curso). Si está probando **SU reconstrucción** (la de la
-[GUIA_IA](../docs/GUIA_IA.md), que corre en el puerto 8136): clic en la
+[GUIA_IA1](../docs/spec_kit/versiones/v1_producto_sqlserver/GUIA_IA1.md), que corre en el puerto 8136): clic en la
 colección → pestaña **Variables** → cambie `base` a
 `http://localhost:8136`. Una sola edición y las 13 peticiones apuntan a su
 proyecto.
