@@ -178,10 +178,76 @@ seguridad de la versión**.
 ## 6. Reglas técnicas del sistema (aplican a todos los módulos)
 
 - **API REST**: JSON siempre; códigos HTTP correctos (200/201, 400, 401,
-  403, 404, 422, 500); endpoints por tabla:
-  `GET /api/{tabla}` · `GET /api/{tabla}/{id}` · `POST` · `PUT /{id}` ·
-  `DELETE /{id}` (borrado **lógico**: `activo = 0`; los listados filtran
-  los inactivos).
+  403, 404, 422, 500); y **un juego de endpoints ESPECÍFICO por cada tabla**:
+
+  ```
+  GET /api/sede          GET /api/sede/{id}          POST /api/sede
+  PUT /api/sede/{id}     PATCH /api/sede/{id}        DELETE /api/sede/{id}
+
+  GET /api/modalidad     GET /api/modalidad/{id}     POST /api/modalidad
+  ...  y así con cada tabla del módulo
+  ```
+
+  El borrado es **lógico** (`activo = 0` / `activo = FALSE`) y los listados
+  filtran los inactivos.
+
+### 6.1 Por qué el proyecto pide endpoints específicos y no una API genérica
+
+Al ver ocho o diez tablas parecidas, la idea aparece sola: **una sola ruta con
+el nombre de la tabla como parámetro** —`GET /api/{tabla}`, `POST
+/api/{recurso}`— atendida por un controlador, un servicio y un repositorio
+únicos que sirven para todo.
+
+Es una buena idea en su lugar, y **en este proyecto no es el lugar**. Vale la
+pena explicar por qué, porque el argumento sirve mucho más allá del curso.
+
+#### La distinción que hay que entender: prototipo contra producción
+
+Una API genérica **sirve para un prototipo**. Es más corta, se escribe en una
+tarde y demuestra que la idea funciona. El problema no es que esté mal escrita:
+es que **un prototipo y un sistema en producción se optimizan para cosas
+distintas**.
+
+| | Un prototipo | Producción |
+|---|---|---|
+| **¿Cuántas veces se escribe?** | Una | Una |
+| **¿Cuántas veces se LEE y se cambia?** | Casi ninguna: se tira | Durante años, y casi siempre por alguien que no lo escribió |
+| **¿Quién lo consume?** | Quien lo escribió, ese mismo día | Otro equipo, otro sistema, y usted mismo seis meses después |
+
+Genérico es **barato de escribir y caro de vivir**. Específico es **caro de
+escribir una vez y barato de vivir**. En un prototipo gana el primero porque
+no hay «vivir». En producción gana el segundo, y por goleada.
+
+De ahí salen seis consecuencias concretas:
+
+| # | Lo que pasa en producción | Por qué el molde genérico no aguanta |
+|---|---|---|
+| 1 | **El contrato hay que LEERLO, no recordarlo** | Swagger muestra `/api/{tabla}`: un hueco. Quien abre la API no sabe qué recursos hay ni qué campos lleva cada uno. Y este proyecto se sustenta proyectando Swagger: **si no dice qué hay, no hay qué sustentar** |
+| 2 | **Las tablas se van diferenciando** | Toda tabla que sobrevive acumula reglas propias: una no se borra, otra audita, otra tiene un campo calculado. El molde obliga a meter condiciones «si la tabla es X…», y ahí el ahorro se acabó: queda un intérprete escrito a mano, peor que los diez controladores que se querían evitar |
+| 3 | **Los permisos son POR RECURSO** | «El coordinador ve sedes pero no roles» no cabe en una ruta única: o se autoriza de más, o se agrega un mapa de reglas por tabla — que es la lista de controladores otra vez, hecha a mano y sin ayuda del compilador |
+| 4 | **Hay que operar el sistema** | Métricas, registros, límites de tasa, alertas: todo se agrupa por ruta. Con `/api/{tabla}` todo el tráfico es **una sola línea** en el tablero, y nunca se puede decir «el endpoint de sedes está lento» |
+| 5 | **Hay que cambiar un recurso sin tocar los demás** | Agregar un campo, cambiar una validación, deprecar algo. Con un molde compartido, **cada cambio pequeño toca las diez tablas**: el riesgo se multiplica por diez |
+| 6 | **Los errores en ejecución cuestan incidentes** | Con clases de petición tipadas, un campo mal escrito no compila. Con un diccionario genérico, se descubre en la sustentación o, peor, en producción |
+
+#### Y la excepción honesta, para que esto no sea dogma
+
+**Sí existen APIs genéricas en producción**, y buenas: PostgREST, Hasura, los
+paneles de administración que exponen tablas. La diferencia es que en esos
+casos **lo genérico es el producto entero**: publican un esquema completo
+—generado de la base—, tienen su modelo de permisos por fila y por columna, y
+su contrato *es* «esto expone la base de datos».
+
+Lo que no funciona es **la mitad**: una API de dominio, escrita a mano, con un
+pedazo genérico adentro. Ahí se pagan los costos de las dos formas y no se
+cobra la ventaja de ninguna.
+
+> **De dónde sale esto.** No es una preferencia de nadie: sale de haberlo
+> hecho de las dos formas. El ejemplo de referencia del curso se construyó
+> primero con una ruta genérica — quedó más corto, funcionaba y pasaba sus
+> pruebas —, y al abrir Swagger para sustentarlo no se veía un solo recurso
+> con nombre. Se rehízo con endpoints específicos.
+>
+> Se cuenta aquí para que usted no tenga que pagar la misma tarde.
 - **Separación estricta**: el frontend consume la API; si el frontend toca
   la BD, la arquitectura está rota (criterio de rúbrica).
 - **v3 — seguridad**: `POST /api/login` entrega el JWT; middleware de
