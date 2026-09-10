@@ -18,11 +18,29 @@ existe la de rama: ¿se probaron el `if` Y el `else`?).
 **La trampa:** ejecutar una línea NO es verificarla. Esta prueba sube la
 cobertura y no protege nada:
 
+```csharp
+// Prueba HUECA: ejecuta el método... y no verifica NADA
+[Fact]
+public async Task CrearProducto_Funciona()
+{
+    var creado = await servicio.CrearProductoAsync(peticion);
+    // (sin Assert: si CrearProductoAsync guarda mal, esta prueba PASA)
+}
 ```
-# Prueba HUECA: ejecuta el método... y no verifica NADA
-resultado = servicio.crear_producto(datos)
-# (sin assert: si crear_producto guarda mal, esta prueba PASA)
+
+La que sí protege lleva **una línea que puede fallar**:
+
+```csharp
+[Fact]
+public async Task CrearProducto_GuardaElNombre()
+{
+    var creado = await servicio.CrearProductoAsync(peticion);
+    Assert.Equal(peticion.Nombre, creado.Nombre);   // ← esta línea ES la prueba
+}
 ```
+
+Si borra el `Assert`, la prueba sigue pasando **y sigue sumando la misma
+cobertura**. Ahí está el problema de la métrica.
 
 **Cómo leerla bien:** cobertura BAJA sí es una alarma confiable (hay
 código que nadie ejecuta jamás en pruebas); cobertura ALTA, sola, no
