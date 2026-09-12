@@ -43,19 +43,19 @@ Esto es de la prueba de capas de **este** repositorio, en
 `api_facturas/pruebas/Programa.cs`:
 
 ```csharp
-// PREPARAR: el servicio, armado con un repositorio falso en memoria
+// PREPARAR (Arrange): el servicio, armado con un repositorio falso en memoria
 var servicio = new ServicioProducto(new RepositorioFalsoEnMemoria());
 
-// EJECUTAR: la operación que se quiere probar
+// EJECUTAR (Act): la operación que se quiere probar
 await servicio.CrearAsync(new Producto { Codigo = "T1", Nombre = "Test", Stock = 5, Valorunitario = 100m });
 
-// COMPROBAR: la línea que PUEDE FALLAR — esta línea ES la prueba
+// COMPROBAR (Assert): la línea que PUEDE FALLAR — esta línea ES la prueba
 Verificar((await servicio.ListarAsync(10))[0].Codigo == "T1", "crear + listar");
 ```
 
-> **Los tres comentarios en mayúscula no están en el archivo:** los agregué
-> aquí para señalar las partes. El código sí es el de su repositorio, línea
-> por línea — vaya y compárelo.
+> **Los comentarios en mayúscula no están en el archivo:** los agregué
+> aquí para señalar las partes. El código sí es el de su repositorio,
+> línea por línea — vaya y compárelo.
 
 
 **La tercera parte es la prueba.** Las dos primeras solo montan la escena. Si
