@@ -52,7 +52,7 @@ Las antiguas "entregas" ahora son **versiones** con spec kit propio:
 | **v1** | CRUD de las **tablas sin FK** del módulo — API REST + Frontend funcionando | Criterios en verde + tag `v1` |
 | **v2** | CRUD de **TODAS las tablas** (FK con listas desplegables cargadas desde la API; tablas puente) | Regresión v1 + criterios + tag `v2` |
 | **v3** | **JWT + sesiones + control de acceso por roles** + CRUD de usuario/rol/rol_usuario (solo admin) | Regresión v1-v2 + criterios + tag `v3` |
-| **v4** | Aplicativo completo: **10 consultas multitabla** (4+ tablas c/u), **dashboard**, **imagen corporativa**, páginas corporativas, responsive/PWA y **publicación** en servidor gratuito | Regresión total + criterios + tag `v4` |
+| **v4** | Aplicativo completo: **10 consultas multitabla** (4+ tablas c/u), **dashboard**, **imagen corporativa con su manual de marca**, páginas corporativas, responsive/PWA y **publicación** en servidor gratuito | Regresión total + criterios + tag `v4` |
 
 ### 2.1 Calendario y evaluación del semestre (100%)
 
@@ -258,7 +258,8 @@ cobra la ventaja de ninguna.
 - **v4 — cierre**: 10 consultas multitabla (mínimo 4 tablas cada una)
   expuestas como endpoints y presentadas en el dashboard con gráficos;
   páginas corporativas (Home, Productos/Servicios, Soporte, Contacto,
-  Sobre Nosotros) con imagen corporativa de la empresa hipotética; diseño
+  Sobre Nosotros) con imagen corporativa de la empresa hipotética **respaldada
+  por un manual de marca** (ver abajo); diseño
   responsive (PWA si es posible); publicación en servidor gratuito según
   el stack (las opciones están en el documento de su módulo original y
   las valida el profesor).
@@ -268,6 +269,43 @@ cobra la ventaja de ninguna.
 - **Stack**: cada equipo elige su lenguaje/framework con aprobación del
   profesor — la metodología y los contratos son los mismos en cualquier
   stack (esa es la gracia).
+
+### El manual de marca de la v4
+
+La imagen corporativa no se improvisa el último día: **se escribe antes en un
+manual, y después la pantalla lo cumple.** Eso es lo que se evalúa.
+
+**El equipo escoge:**
+
+| Opción | Qué implica |
+|---|---|
+| **Adoptar el manual del ejemplo** | Usar el que viene en el repositorio del proyecto (`MANUAL_DE_MARCA.md`), con sus colores, su logosímbolo y sus reglas |
+| **Hacer el suyo** | Inventar la marca de su empresa hipotética y escribir su propio manual |
+
+**Es libre.** Lo que **no** es libre es que exista:
+
+> **Tiene que haber un manual de marca en el repositorio, como `.pdf` y/o
+> `.md`.** Sin él no hay contra qué comparar la pantalla, y el criterio de
+> imagen corporativa no se puede calificar.
+
+**Lo mínimo que ese manual debe fijar:**
+
+1. El **logosímbolo** y sus versiones.
+2. La **paleta**, con los valores en hexadecimal.
+3. Las **tipografías** autorizadas.
+4. El **tamaño mínimo** del logo y su **área de reserva**.
+5. Los **usos incorrectos**.
+
+Y una exigencia que sale del propio curso: **los valores del manual van en un
+archivo aparte** —un `marca.css` o equivalente— y los estilos de la
+aplicación usan la variable, nunca el valor. Así el manual es una
+restricción, y no una preferencia de quien programa.
+
+> **El contraste se calcula, no se opina.** Si un color del manual no alcanza
+> la relación que pide el nivel AA de las WCAG para el texto, el manual debe
+> decir para qué sirve ese color y cuál se usa en su lugar. Hay un documento
+> del curso con la fórmula y las referencias: `CONCEPTOS_IDENTIDAD_VISUAL.md`.
+
 
 ## 7. Rúbrica de evaluación
 
@@ -285,7 +323,7 @@ según la calidad de lo entregado**)** o **No cumple (de 0 a 2.9)**.
 | **Borrado lógico** | En las tablas de la versión, con inactivos filtrados | Borrado físico |
 | **Git y GitHub** | Repos privados con el profesor invitado; cada estudiante en su rama; TODO por PR; solo el encargado hace merge; tags v1…vN; commits descriptivos | Commits directos a main, repo público o sin el profesor, "un solo commit con todo" |
 | **Dashboard y consultas (v4)** | 10 consultas de 4+ tablas con gráficos claros | Menos de 10 consultas, consultas de menos de 4 tablas, o sin dashboard |
-| **Imagen corporativa y responsive (v4)** | Identidad coherente; todo responsive | Sin identidad o no responsive |
+| **Imagen corporativa y responsive (v4)** | **Existe un manual de marca** —propio o el del ejemplo— y la pantalla lo cumple: los colores y las tipografías salen de él, no de un gusto; todo responsive | No hay manual, o lo hay y la pantalla no lo respeta, o no es responsive |
 | **Publicación (v4)** | Publicado, funcional, con secretos en variables de entorno del servidor | No publicado o con secretos expuestos |
 
 Dentro de la franja "Cumple", la nota (3.0 a 5.0) refleja la calidad:
