@@ -246,6 +246,70 @@ docker compose down [-v]         # apagar todo (-v: borrar también los volúmen
 docker compose up -d --remove-orphans  # además, borrar contenedores huérfanos (sección 5)
 ```
 
+### Cómo se leen los comandos que encuentre por ahí
+
+Fíjese en la `X` de arriba: **no es parte del comando**. Está puesta donde va
+un valor suyo — el nombre de su contenedor. Y el `[-v]` va entre corchetes
+cuadrados porque es **opcional**.
+
+Esa forma de escribir no es de este documento: es la de toda la
+documentación técnica. En la página de Docker, en la de Git y en cualquier
+respuesta de internet va a encontrar comandos así:
+
+```
+docker stop <nombre>
+docker logs <contenedor>
+git clone <url>
+```
+
+**Los signos `<` y `>` NO se escriben.** Son una marca que quiere decir
+*«aquí va un valor suyo»*, y lo de adentro dice qué clase de valor.
+
+**Ejemplo completo.** La documentación dice:
+
+```
+docker stop <nombre>
+```
+
+Usted primero averigua el nombre:
+
+```powershell
+docker ps
+```
+
+```
+NAMES                              PORTS
+proyecto_php1-api-facturas-1       0.0.0.0:8022->8022/tcp
+proyecto_php1-mariadb-1            0.0.0.0:13326->3306/tcp
+```
+
+Y después escribe **el nombre tal como aparece**, sin los signos:
+
+```powershell
+docker stop proyecto_php1-api-facturas-1
+```
+
+Lo que **no** se escribe:
+
+| Mal | Por qué |
+|---|---|
+| `docker stop <nombre>` | Dejó la marca en vez de reemplazarla |
+| `docker stop <proyecto_php1-api-facturas-1>` | Puso el valor, pero dejó los signos |
+| `docker stop "proyecto_php1-api-facturas-1"` | Las comillas sobran aquí |
+
+**Las tres marcas que verá siempre:**
+
+| Marca | Significa |
+|---|---|
+| `<algo>` | Obligatorio. Reemplácelo por su valor, sin los signos |
+| `[algo]` | Opcional. Puede omitirlo entero |
+| `a\|b` | Escoja uno de los dos |
+
+**¿Y de dónde sale el valor?** Casi siempre de un comando que lista lo que
+hay: para contenedores es `docker ps`, y el nombre está en la columna
+`NAMES`.
+
+
 ## 8. ¿Hace falta una cuenta de Docker?
 
 **No.** Las imágenes que usa este proyecto son **públicas**: se descargan sin
