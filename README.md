@@ -34,16 +34,43 @@ En la terminal integrada de VS Code (*Terminal → New Terminal*, PowerShell):
 > proyecto cuando en realidad está hablando con el viejo. Verifíquelo y
 > apáguelo primero:
 >
+> **Los dos comandos se copian y se pegan TAL CUAL.** No hay nada que
+> reemplazar — ni el `proyecto_`, ni el `$_`. Ese `$_` es de PowerShell y
+> significa «cada uno de los que vinieron por la tubería»; si usted lo
+> cambia por algo, deja de funcionar.
+>
+> **Paso 1 — VERIFICAR.** ¿Quedó algo del curso encendido?
+>
 > ```powershell
 > docker ps --filter "name=proyecto_"
-> # ↑ VERIFICAR: ¿aparece algún proyecto del curso todavía encendido?
-> docker ps --filter "name=proyecto_" -q | ForEach-Object { docker stop $_ }
-> # ↑ LIMPIAR: apaga TODOS los contenedores del curso de una sola vez
 > ```
 >
-> La limpieza no borra nada (los datos quedan en sus volúmenes) y
-> funciona aunque ya no tenga la carpeta vieja. También sirve el botón
-> Stop de Docker Desktop. Solo entonces continúe.
+> Si hay algo, se ve así:
+>
+> ```
+> NAMES                                                STATUS                    PORTS
+> proyecto_aplicacion_y_servicios_web-api-facturas-1   Up 2 hours                0.0.0.0:8036->8036/tcp
+> proyecto_aplicacion_y_servicios_web-sqlserver-1      Up 2 hours (healthy)      0.0.0.0:11467->1433/tcp
+> ```
+>
+> **Si no hay nada, sale solo el encabezado** —`NAMES  STATUS  PORTS`— y
+> ninguna línea debajo. En ese caso no tiene que limpiar nada: siga.
+>
+> **Paso 2 — LIMPIAR.** Apaga de una vez todos los del curso:
+>
+> ```powershell
+> docker ps --filter "name=proyecto_" -q | ForEach-Object { docker stop $_ }
+> ```
+>
+> Va imprimiendo el identificador de cada uno que apaga. Para comprobar que
+> quedó limpio, repita el paso 1: debe salir solo el encabezado.
+>
+> **Qué efecto tiene:** apaga los contenedores. **No borra nada** — los datos
+> quedan en sus volúmenes y cada proyecto se vuelve a encender con su
+> `docker compose up -d`. Funciona aunque ya no tenga la carpeta vieja.
+> También sirve el botón **Stop** de Docker Desktop, uno por uno.
+>
+> Solo entonces continúe.
 
 ```powershell
 git clone https://github.com/ccastro2050/proyecto_aplicacion_y_servicios_web.git
