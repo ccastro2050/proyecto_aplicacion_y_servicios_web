@@ -66,6 +66,54 @@ Esto hace cada instrucción:
 | `CMD` | Al **encender** el contenedor | Cada vez que arranca |
 
 
+### 2.2 ¿Por qué DOS archivos y no uno?
+
+Es la pregunta que sigue, y la respuesta es que **responden preguntas
+distintas**:
+
+| | `Dockerfile` | `docker-compose.yml` |
+|---|---|---|
+| **Qué responde** | ¿Cómo se **arma** esta pieza? | ¿Cómo se **combinan** las piezas? |
+| **De qué habla** | De **un** programa | Del **sistema completo** |
+| **Cuántos hay** | Uno por cada imagen propia | **Uno solo** por proyecto |
+| **Qué contiene** | Instalar, copiar, con qué comando arranca | Servicios, puertos, variables, volúmenes, orden |
+| **Se usa con** | `docker build` | `docker compose up` |
+
+Dicho en corto: **el `Dockerfile` es la receta de un plato; el compose es
+la mesa servida** — qué platos hay, en qué orden salen y quién se sienta
+al lado de quién.
+
+### Y por eso no todos los servicios tienen `Dockerfile`
+
+En este proyecto:
+
+| Servicio | ¿Tiene `Dockerfile`? | Por qué |
+|---|---|---|
+| `api-facturas` | **Sí**, en `./api_facturas` | Es código **suyo**: nadie más lo tiene, hay que armarlo |
+| `sqlserver` | **No** | Usa `mcr.microsoft.com/mssql/server:2022-latest`, una imagen ya hecha: no hay nada que construir |
+| `sqlserver-init` | **No** | Usa `mcr.microsoft.com/mssql/server:2022-latest`, una imagen ya hecha: no hay nada que construir |
+
+**Un `Dockerfile` por imagen propia; un compose por sistema.** Si mañana
+este proyecto sumara otro servicio propio, tendría su propio `Dockerfile`
+y una entrada más en el mismo compose.
+
+### Cuál se toca cuando algo cambia
+
+| Lo que cambia | Se toca |
+|---|---|
+| Una librería o dependencia del programa | El `Dockerfile` (y toca `--build`) |
+| La versión del lenguaje | El `Dockerfile` |
+| Un puerto, una clave, una dirección | El `docker-compose.yml` |
+| Agregar un servicio nuevo | El `docker-compose.yml` (y su `Dockerfile`, si es propio) |
+| El orden en que arrancan | El `docker-compose.yml` |
+
+> **Y hay una razón de fondo:** el `Dockerfile` es **portátil** — esa imagen
+> sirve en este proyecto, en otro, o en un servidor de producción, sin
+> cambiarle una línea. El compose, en cambio, describe **este** sistema:
+> estos puertos, estas claves, esta red. Mezclarlos en un solo archivo
+> amarraría la pieza reutilizable al montaje de un día.
+
+
 ## 3. Contenedor
 
 Un contenedor es una **instancia viva de una imagen**: un proceso corriendo
