@@ -510,20 +510,91 @@ Eso es lo que hace posibles dos cosas que usted ya usa sin pensarlas:
 | Lo que usted escribe | Por qué funciona |
 |---|---|
 | `host=mariadb` en la API | Docker reparte nombres **dentro de esa red**: `mariadb` es el nombre del servicio, y ahí adentro se resuelve como si fuera una dirección |
-| Que el front de un proyecto **no vea** la base de otro | Son redes distintas. No se hablan, aunque estén en el mismo computador |
+| Que un proyecto **no encuentre por nombre** nada de otro | Son redes distintas, y el nombre solo vale dentro de la suya |
 
-Se llama **red** porque hace lo mismo que una red de verdad: **reparte
-direcciones IP**. Cada proyecto se lleva un bloque de direcciones para
-repartir entre sus contenedores.
+#### ¿Por qué se le puede llamar «red»?
 
-**Y ahí está el detalle que importa:** esas direcciones no son infinitas.
+Porque tiene las mismas piezas que la red de una oficina. No es una metáfora:
+son los mismos componentes, hechos por software. Véalos:
 
 ```powershell
-docker network ls
+docker network inspect proyecto_aplicacion_y_servicios_web_default
 ```
 
-Ese comando las lista. Verá una por cada proyecto levantado, con el nombre de
-su carpeta y el sufijo `_default`.
+`inspect` muestra la ficha completa de la red. Esto es lo que trae, y por qué
+cada cosa es exactamente lo que hace que merezca el nombre:
+
+| Pieza de una red de verdad | Lo que tiene la red de Docker |
+|---|---|
+| Un **rango de direcciones** (la subred) | `192.168.176.0/20`: el bloque que Docker le asignó a ESE proyecto |
+| Una **puerta de salida** (el *gateway*, el router) | `192.168.176.1`: por ahí sale hacia afuera lo que tenga que salir |
+| Una **tarjeta de red** por máquina, con su **IP** y su **MAC** | Cada contenedor tiene las suyas: `mariadb` quedó en `192.168.176.2`, la API en `.4`, el front en `.5`, cada uno con su MAC |
+| Un **servidor DNS** que traduce nombres a direcciones | Docker pone uno en `127.0.0.11`, y es el que hace que `host=mariadb` funcione |
+| **Aislamiento**: quien no está en la red, no está | Los nombres de esta red no existen en ninguna otra |
+
+Esas cinco cosas son lo que define una red. Por eso `mariadb` funciona como
+dirección: **no es un truco de Docker Compose, es un DNS resolviendo un nombre
+en una LAN**, igual que `www.usb.edu.co` en la de la universidad.
+
+#### ¿Cómo se llama la red de un proyecto?
+
+**Compose la bautiza solo**: toma el nombre de la carpeta que contiene el
+`docker-compose.yml` y le pega `_default`. La carpeta `proyecto_aplicacion_y_servicios_web` produce
+la red `proyecto_aplicacion_y_servicios_web_default`. Tres formas de confirmarlo:
+
+```powershell
+# 1. Todas las redes del computador, una línea por cada una.
+docker network ls
+
+# 2. Parado en la carpeta del proyecto: qué nombre de proyecto dedujo Compose.
+#    Lo que salga en «name:» es el prefijo de su red.
+docker compose config --format json
+
+# 3. Preguntarle al contenedor en cuál red está metido. Lo de las llaves es una
+#    plantilla de Go: recorre las redes del contenedor e imprime su nombre.
+docker inspect proyecto_aplicacion_y_servicios_web-api-facturas-1 --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}'
+```
+
+#### Bajar una red y subir la de otro proyecto
+
+**La forma correcta es por el proyecto, no por la red.** Una red con
+contenedores dentro no se puede borrar, y Docker se lo dice:
+
+```
+Error response from daemon: error while removing network:
+network proyecto_aplicacion_y_servicios_web_default has active endpoints (name:"proyecto_aplicacion_y_servicios_web-api-facturas-1" …)
+```
+
+Ese error no rompe nada: la red sigue viva y los contenedores también. Lo que
+le está diciendo es que primero hay que sacar a los inquilinos. Y eso lo hace
+`down`, parado en la carpeta del proyecto que quiere apagar:
+
+```powershell
+# Bajar ESTE proyecto: apaga y borra sus contenedores y SU red. Los datos
+# quedan en el volumen, así que no se pierde nada.
+docker compose down
+
+# Subir el OTRO: cambiarse a su carpeta y levantarlo. Ahí Compose le crea a
+# ÉL su propia red, con el nombre de ESA carpeta.
+cd ..\proyecto_php2
+docker compose up -d
+```
+
+Y si quedaron redes de proyectos que ya no existen —carpetas borradas,
+proyectos viejos— hay una escoba:
+
+```powershell
+# Borra TODAS las redes que no tengan ningún contenedor dentro. Las que están
+# en uso ni las toca, así que es seguro. Pide confirmación; -f se la salta.
+docker network prune
+```
+
+> **Por qué `down` y no `stop`.** `stop` apaga los contenedores pero deja la
+> red creada y el bloque de direcciones reservado. Si lo que busca es sitio
+> para levantar otro proyecto, `stop` no le sirve: tiene que ser `down`.
+
+**Y ahí está el detalle que importa:** esos bloques de direcciones no son
+infinitos.
 
 **Dos proyectos levantados al tiempo, dibujados:**
 
