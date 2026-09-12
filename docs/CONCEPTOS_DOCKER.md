@@ -524,6 +524,49 @@ docker network ls
 Ese comando las lista. Verá una por cada proyecto levantado, con el nombre de
 su carpeta y el sufijo `_default`.
 
+**Dos proyectos levantados al tiempo, dibujados:**
+
+```mermaid
+flowchart LR
+    nav["🖥️ Su computador<br/>(el navegador)"]
+
+    subgraph redA["Red: proyecto_php1_default"]
+        direction TB
+        frontA["front-php<br/>:8020"]
+        apiA["api-facturas<br/>:8022"]
+        dbA[("mariadb")]
+        frontA -->|"http://api-facturas:8022<br/>por el NOMBRE"| apiA
+        apiA -->|"host=mariadb"| dbA
+    end
+
+    subgraph redB["Red: proyecto_php2_default"]
+        direction TB
+        frontB["front-php<br/>:8084"]
+        apiB["api-facturas<br/>:8086"]
+        dbB[("mariadb")]
+        frontB --> apiB
+        apiB --> dbB
+    end
+
+    nav -->|"localhost:8020"| frontA
+    nav -->|"localhost:8084"| frontB
+
+    frontA -. "NO la ve: otra red" .-> dbB
+
+    classDef red fill:#eef5ff,stroke:#5b8fd6,stroke-width:2px
+    class redA,redB red
+```
+
+**Guía de lectura.** El navegador está **afuera** de las dos redes: entra por
+`localhost` y el **puerto publicado**. Los contenedores, en cambio, se hablan
+**por el nombre del servicio**, y solo dentro de su propia red. La flecha
+punteada es la que no existe: el front de un proyecto **no puede** ver la base
+del otro, aunque estén en el mismo computador y aunque las dos bases se
+llamen `mariadb`.
+
+Y fíjese en lo que eso implica: **cada caja azul necesita su propio bloque de
+direcciones.** De ahí sale el problema que viene.
+
 
 ### Cuando Docker dice que ya no caben más redes
 
