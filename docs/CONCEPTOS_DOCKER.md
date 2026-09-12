@@ -654,6 +654,56 @@ esté en el mismo computador.
 > (En Docker Desktop `host.docker.internal` existe solo; en un servidor Linux
 > hay que declararlo con `extra_hosts`.)
 
+**Los dos caminos, dibujados:**
+
+```mermaid
+flowchart LR
+    nav["El navegador<br/>en su computador"]
+    puerta["La puerta publicada<br/>host.docker.internal:8086"]
+
+    subgraph redA["Red: proyecto_php1_default"]
+        direction TB
+        frontA["front-php<br/>:8020"]
+        apiA["api-facturas<br/>:8022"]
+        dbA[("mariadb")]
+        frontA -->|"api-facturas:8022<br/>POR EL NOMBRE"| apiA
+        apiA -->|"mariadb:3306<br/>POR EL NOMBRE"| dbA
+    end
+
+    subgraph redB["Red: proyecto_php2_default"]
+        direction TB
+        frontB["front-php<br/>:8084"]
+        apiB["api-facturas<br/>:8086"]
+        dbB[("mariadb")]
+        frontB -->|"POR EL NOMBRE"| apiB
+        apiB -->|"POR EL NOMBRE"| dbB
+    end
+
+    nav -->|"localhost:8020"| frontA
+    nav -->|"localhost:8084"| frontB
+
+    frontA ==>|"1. sale de su red"| puerta
+    puerta ==>|"2. y entra por la puerta"| apiB
+
+    classDef red fill:#eef5ff,stroke:#5b8fd6,stroke-width:2px
+    classDef door fill:#fdf3e0,stroke:#b8860b,stroke-width:2px
+    class redA,redB red
+    class puerta door
+    linkStyle 6 stroke:#b8860b,stroke-width:3px
+    linkStyle 7 stroke:#b8860b,stroke-width:3px
+```
+
+**Cómo se lee.** Las flechas finas de adentro van **por el nombre** —
+`api-facturas`, `mariadb` — y esas solo valen dentro de su propia caja azul:
+ahí es donde el DNS de Docker sabe quién es quién. La flecha gruesa es la
+otra historia: no usa ningún nombre de la red vecina, **sale al computador**
+y vuelve a entrar por la puerta que ese otro proyecto publicó. Por eso cruza.
+
+El aislamiento, entonces, es **del directorio de nombres, no del cable**. Si
+un proyecto publica un puerto, esa puerta queda abierta para todo lo que
+alcance su computador — su navegador, un programa suyo, o un contenedor de
+otro proyecto.
+
 Si quiere verlo en su máquina, con este proyecto levantado:
 
 ```bash
@@ -670,16 +720,14 @@ docker compose exec api-facturas curl -s -o /dev/null -w "%{http_code}\n" \
     http://host.docker.internal:PUERTO/
 ```
 
-> **Fíjese en la flecha que NO está.** Del front no sale ninguna línea hacia una
-> base de datos: ni hacia la del otro proyecto, ni hacia la suya. El front habla
-> con los **controladores** de la API, y ahí se acaba su mundo; quien toca la
-> base es la API. Y eso **no** es cosa de redes: aunque estuvieran los seis
-> contenedores en la misma red, el front seguiría sin tener nada que ir a buscar
-> a la base. Es la arquitectura por capas. La red explica por qué no *puede*;
-> las capas explican por qué no *debe*.
+> **La regla que no depende de Docker.** El front no entra a la base: ni a la
+> del otro proyecto ni a la suya propia. Habla con los **controladores** de la
+> API, y ahí se acaba su mundo; quien entra a la base es la API. Acabamos de
+> ver que el camino está abierto y que Docker no lo cierra. No se toma igual, y
+> esa es toda la arquitectura por capas: una disciplina, no una reja.
 
-Y fíjese en lo que eso implica: **cada caja azul necesita su propio bloque de
-direcciones.** De ahí sale el problema que viene.
+Cada caja azul, entonces, necesita **su propio bloque de direcciones**. De ahí
+sale el problema que viene.
 
 
 ### Cuando Docker dice que ya no caben más redes
