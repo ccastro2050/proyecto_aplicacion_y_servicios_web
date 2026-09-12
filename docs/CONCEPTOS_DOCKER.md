@@ -79,9 +79,21 @@ distintas**:
 | **Qué contiene** | Instalar, copiar, con qué comando arranca | Servicios, puertos, variables, volúmenes, orden |
 | **Se usa con** | `docker build` | `docker compose up` |
 
-Dicho en corto: **el `Dockerfile` es la receta de un plato; el compose es
-la mesa servida** — qué platos hay, en qué orden salen y quién se sienta
-al lado de quién.
+**Es decir:** el `Dockerfile` describe **cómo se construye un artefacto**
+—una imagen—, y el `docker-compose.yml` describe **cómo se despliega un
+sistema** compuesto por varios de esos artefactos.
+
+Son dos responsabilidades distintas y es deliberado que estén separadas:
+
+| Responsabilidad | Archivo | Pregunta que resuelve |
+|---|---|---|
+| **Empaquetado** | `Dockerfile` | ¿Qué necesita este programa para ejecutarse en cualquier parte? |
+| **Orquestación** | `docker-compose.yml` | ¿Cómo se conectan y en qué orden arrancan los programas de este sistema? |
+
+Separarlas es lo que permite que **la misma imagen se use en otro sistema
+sin arrastrar la configuración de este**: los puertos, las claves y las
+dependencias entre servicios no están dentro de la imagen, sino afuera, en
+el archivo que describe el montaje.
 
 ### Y por eso no todos los servicios tienen `Dockerfile`
 
