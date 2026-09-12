@@ -45,6 +45,11 @@ En la terminal integrada de VS Code (*Terminal → New Terminal*, PowerShell):
 > docker ps --filter "name=proyecto_"
 > ```
 >
+> | La parte | Qué significa |
+> |---|---|
+> | `docker ps` | Lista los contenedores **encendidos** |
+> | `--filter "name=proyecto_"` | Muestra solo aquellos cuyo nombre contiene `proyecto_`, que es como empiezan **todos** los de estos cursos |
+>
 > Si hay algo, se ve así:
 >
 > ```
@@ -61,6 +66,18 @@ En la terminal integrada de VS Code (*Terminal → New Terminal*, PowerShell):
 > ```powershell
 > docker ps --filter "name=proyecto_" -q | ForEach-Object { docker stop $_ }
 > ```
+>
+> | La parte | Qué significa |
+> |---|---|
+> | `docker ps --filter …` | Lo mismo de arriba: los del curso que están encendidos |
+> | `-q` | *quiet*. En vez de la tabla, imprime **solo el identificador** de cada uno |
+> | `\|` | La tubería: entrega esa lista al comando que sigue |
+> | `ForEach-Object { … }` | «Para **cada uno** de los que llegaron, haga esto» |
+> | `$_` | **Cada uno de ellos.** Es de PowerShell: no se reemplaza por nada |
+> | `docker stop $_` | Apaga ese contenedor |
+>
+> En una frase: **«de los contenedores del curso que estén encendidos, tome
+> el identificador de cada uno y apáguelo».**
 >
 > Va imprimiendo el identificador de cada uno que apaga. Para comprobar que
 > quedó limpio, repita el paso 1: debe salir solo el encabezado.
