@@ -53,6 +53,11 @@ await servicio.CrearAsync(new Producto { Codigo = "T1", Nombre = "Test", Stock =
 Verificar((await servicio.ListarAsync(10))[0].Codigo == "T1", "crear + listar");
 ```
 
+> **Los tres comentarios en mayúscula no están en el archivo:** los agregué
+> aquí para señalar las partes. El código sí es el de su repositorio, línea
+> por línea — vaya y compárelo.
+
+
 **La tercera parte es la prueba.** Las dos primeras solo montan la escena. Si
 borra el `Verificar`, el programa sigue corriendo, sigue sin dar error… y ya
 no está probando nada. Vuelva a esta idea en la Parte 2, porque es el origen
