@@ -246,7 +246,42 @@ docker compose down [-v]         # apagar todo (-v: borrar también los volúmen
 docker compose up -d --remove-orphans  # además, borrar contenedores huérfanos (sección 5)
 ```
 
-## 8. Referencias
+## 8. ¿Hace falta una cuenta de Docker?
+
+**No.** Las imágenes que usa este proyecto son **públicas**: se descargan sin
+registrarse, sin iniciar sesión y sin pagar nada.
+
+Al abrir Docker Desktop puede aparecer una ventana pidiendo *Sign in* o
+*Create an account*. **Ciérrela, o escoja «Continue without signing in».**
+Todo funciona igual.
+
+### ¿Y si ya tiene cuenta y entra con ella?
+
+**También funciona**, y hasta ayuda un poco: Docker Hub le da un límite de
+descargas más alto a quien tiene la sesión abierta que a quien descarga de
+forma anónima.
+
+Lo que **no** conviene es ponerse a **crear** una cuenta cuando ya está
+trabajando. Son minutos gastados en algo que no hacía falta, y en una clase o
+en una entrega esos minutos se sienten.
+
+### Lo único que sí es obligatorio
+
+**Que Docker Desktop esté encendido.** Ábralo y espere a que termine de
+arrancar: el icono de la ballena, abajo a la derecha, deja de moverse.
+
+Si Docker está apagado, cualquier comando responde algo así:
+
+```
+error during connect: ... the docker daemon is not running
+```
+
+Ese mensaje **no es un problema del proyecto**: es Docker que no está
+corriendo. Enciéndalo y repita el comando.
+
+---
+
+## 9. Referencias
 
 1. Docker — *Docker overview*: <https://docs.docker.com/get-started/docker-overview/>
 2. Docker — imágenes y contenedores: <https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/>
