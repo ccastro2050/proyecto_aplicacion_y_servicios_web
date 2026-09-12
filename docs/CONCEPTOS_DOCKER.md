@@ -421,6 +421,53 @@ Y las dos banderas del comando:
 > y eso es lo que hace que su proyecto sea entregable.
 
 
+### ¿Por qué esa dirección del `.yml` no abre en el navegador?
+
+Es el tropiezo más común, y vale la pena entenderlo porque explica cómo
+se hablan los contenedores.
+
+En el compose aparece una dirección como esta:
+
+```yaml
+URL_API: http://api-facturas:8036
+```
+
+Si usted la escribe en el navegador, **no abre**. El navegador responde que
+no encuentra el sitio, y parece que algo quedó mal montado. No es así.
+
+**`api-facturas` es un nombre que solo existe dentro de la red de Docker.**
+Su navegador corre en Windows, fuera de esa red, y no sabe quién es.
+
+| Desde dónde | Qué dirección sirve | Por qué |
+|---|---|---|
+| **Su navegador** | `http://localhost:8036` | Está fuera de Docker. Usa el puerto **publicado** |
+| **Otro contenedor** | `http://api-facturas:8036` | Están en la misma red: se llaman por el **nombre del servicio** |
+
+Esa línea del compose **no está puesta para usted**: es la que usa el
+contenedor del front para hablarle a la API. Son vecinos en la misma red.
+
+### La regla, en dos renglones
+
+| Quién pregunta | Qué escribe |
+|---|---|
+| Usted, en el navegador | `localhost` + el puerto de la **izquierda** de `ports:` |
+| Un contenedor a otro | el **nombre del servicio** + el puerto de la **derecha** |
+
+> **En este proyecto los dos números son iguales** (`8036:8036`), y eso
+> despista: parece que la dirección debería funcionar igual desde
+> cualquier parte. Lo que cambia no es el puerto — es **el nombre de la
+> máquina a la que se le pregunta**.
+
+### Y al revés también rompe
+
+Si alguien cambiara esa línea por `http://localhost:8036`, el front
+dejaría de encontrar la API. Porque **dentro de un contenedor, `localhost` es
+el contenedor mismo** — y ahí no hay ninguna API, solo el front.
+
+Ese es el error que más cuesta encontrar, porque `localhost` se ve correcto
+y en su computador sí funciona.
+
+
 ## 6. Kubernetes (y por qué este curso NO lo necesita)
 
 Kubernetes (K8s) es el orquestador de contenedores **a escala de clúster**:
