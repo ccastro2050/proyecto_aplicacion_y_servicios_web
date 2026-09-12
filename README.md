@@ -48,7 +48,16 @@ En la terminal integrada de VS Code (*Terminal → New Terminal*, PowerShell):
 > | La parte | Qué significa |
 > |---|---|
 > | `docker ps` | Lista los contenedores **encendidos** |
-> | `--filter "name=proyecto_"` | Muestra solo aquellos cuyo nombre contiene `proyecto_`, que es como empiezan **todos** los de estos cursos |
+> | `--filter` | «No me muestre todo, filtre» |
+> | `name=` | Filtrar **por nombre**. Es palabra de Docker: también existen `status=` y `ancestor=` |
+> | `proyecto_` | **El texto a buscar.** Esto no es sintaxis: lo escogió quien escribió el comando |
+>
+> **Ojo con esa última parte.** El comando se copia tal cual y funciona, pero
+> `proyecto_` no es una palabra mágica: es el texto por el que se busca.
+> Funciona porque **todas** las carpetas de estos cursos se llaman
+> `proyecto_algo`, y Docker le pone al contenedor el nombre de la carpeta de
+> la que salió. Si su carpeta se llamara `taller_php`, el filtro sería
+> `name=taller_`.
 >
 > Si hay algo, se ve así:
 >
