@@ -468,6 +468,294 @@ Ese es el error que más cuesta encontrar, porque `localhost` se ve correcto
 y en su computador sí funciona.
 
 
+### Subir, bajar, y qué ocupa cada proyecto encendido
+
+Antes del problema, el manejo diario. **Todo se hace parado en la carpeta del
+proyecto**, la que tiene el `docker-compose.yml`.
+
+| Qué quiere | Comando | Qué pasa |
+|---|---|---|
+| **Subir** | `docker compose up -d` | Crea la red, los volúmenes y los contenedores, y los deja corriendo |
+| **Bajar** | `docker compose down` | Apaga y **borra los contenedores y la red**. Los **datos se conservan** |
+| **Bajar y borrar los datos** | `docker compose down -v` | Lo anterior **y borra el volumen**: la base vuelve a cargarse desde cero |
+| **Pausar sin desarmar** | `docker compose stop` | Apaga los contenedores pero **la red sigue ocupada** |
+| **Ver qué hay de este proyecto** | `docker compose ps -a` | Los servicios de esta carpeta |
+| **Ver TODO lo encendido** | `docker ps` | De todos los proyectos del computador |
+
+> **`stop` y `down` no son lo mismo, y aquí importa la diferencia.** `stop`
+> apaga el motor pero **deja la red reservada**; `down` la libera. Si lo que
+> necesita es espacio para otro proyecto, `down`.
+
+**Qué ocupa un proyecto encendido:**
+
+| Recurso | ¿Se libera con `down`? |
+|---|---|
+| Memoria y CPU | Sí |
+| Los **puertos** publicados | Sí |
+| **La red** | Sí |
+| El **volumen** con los datos | **No** — y está bien: por eso no se pierde nada |
+| Las imágenes descargadas | No |
+
+---
+
+### Qué es una «red de Docker», antes de seguir
+
+Cuando usted levanta un proyecto, Docker le crea **una red privada solo para
+él**: un cable virtual que conecta sus contenedores entre sí **y con nadie
+más**.
+
+Eso es lo que hace posibles dos cosas que usted ya usa sin pensarlas:
+
+| Lo que usted escribe | Por qué funciona |
+|---|---|
+| `host=mariadb` en la API | Docker reparte nombres **dentro de esa red**: `mariadb` es el nombre del servicio, y ahí adentro se resuelve como si fuera una dirección |
+| Que el front de un proyecto **no vea** la base de otro | Son redes distintas. No se hablan, aunque estén en el mismo computador |
+
+Se llama **red** porque hace lo mismo que una red de verdad: **reparte
+direcciones IP**. Cada proyecto se lleva un bloque de direcciones para
+repartir entre sus contenedores.
+
+**Y ahí está el detalle que importa:** esas direcciones no son infinitas.
+
+```powershell
+docker network ls
+```
+
+Ese comando las lista. Verá una por cada proyecto levantado, con el nombre de
+su carpeta y el sufijo `_default`.
+
+
+### Cuando Docker dice que ya no caben más redes
+
+Levantando varios proyectos, un día aparece esto:
+
+```
+Error response from daemon: all predefined address pools have been fully subnetted
+failed to create network proyecto_php1_default
+```
+
+Y **no es culpa del proyecto que intentó levantar**: el que falla es el
+siguiente de la fila, no el culpable.
+
+> ### Esto pasó de verdad, y por eso se deja escrito
+>
+> **12 de septiembre de 2026.** Con los proyectos del curso levantados, un
+> `docker compose up -d` en otro proyecto respondió:
+>
+> ```
+> all predefined address pools have been fully subnetted
+> failed to create network proyecto_php1_default
+> ```
+>
+> La primera reacción fue pensar que **ese** proyecto se había roto: se abrió
+> el navegador, `localhost` rechazó la conexión, y todo apuntaba a que el
+> proyecto estaba mal. No era eso. `docker network ls` mostró **31 redes**, y
+> el proyecto que falló solo era el que llegó de último.
+>
+> Un `docker network prune -f` liberó dos redes —de proyectos ya apagados— y
+> el mismo comando que había fallado funcionó de inmediato.
+>
+> **La lección:** cuando un proyecto que antes servía deja de levantar, mire
+> primero **cuánto hay encendido**. El error rara vez está donde parece.
+
+
+**Qué pasó.** Cada proyecto crea **su propia red privada** (sección 5). Docker
+saca esas redes de unos rangos de direcciones que trae de fábrica, y esos
+rangos **alcanzan para unas 30 redes**. La treinta y uno no cabe.
+
+**Cómo se confirma en diez segundos:**
+
+```powershell
+docker network ls
+```
+
+Si la lista pasa de unas treinta, ese es el problema. No es memoria, no es
+disco, no es el proyecto.
+
+### ¿Hay que bajar algo? ¿Comprar más? **Ninguna de las dos**
+
+No es un límite de licencia ni de plan de pago —Docker Desktop es gratuito
+para uso educativo— y tampoco falta máquina. **Faltan direcciones de red.**
+Se arregla configurando, y hay dos caminos.
+
+#### Camino 1 — liberar redes (lo normal)
+
+Casi siempre uno tiene encendidos proyectos de la semana pasada sin darse
+cuenta.
+
+**Paso 1.** Vea cuántas redes hay y de quién son:
+
+```powershell
+docker network ls
+```
+
+**Paso 2.** Baje los proyectos que ya no está usando. En la carpeta de cada
+uno:
+
+```powershell
+docker compose down
+```
+
+**Paso 3.** Barra las redes que quedaron sin nadie adentro:
+
+```powershell
+docker network prune -f
+```
+
+**`docker network prune` es seguro:** solo borra redes **sin contenedores
+conectados**. No toca datos, ni imágenes, ni nada que esté encendido. Si una
+red está en uso, la deja quieta.
+
+> **Si no sabe en qué carpeta está un proyecto viejo**, sirve igual apagar
+> sus contenedores por nombre y después barrer:
+>
+> ```powershell
+> docker ps --filter "name=proyecto_" -q | ForEach-Object { docker stop $_ }
+> docker network prune -f
+> ```
+
+#### Camino 2 — ampliar el rango (cuando de verdad necesita muchos a la vez)
+
+**El caso del profesor de este curso es exactamente ese, y la cuenta explica
+por qué.**
+
+El profesor dicta **varios cursos**. Cada curso no tiene *un* repositorio:
+tiene **uno por versión**, porque cada versión es un sistema distinto que se
+levanta solo. Y cada módulo del proyecto de aula existe además **en tres
+lenguajes**. Multiplicando:
+
+| Familia | Proyectos |
+|---|---|
+| Construcción de Software | 8 |
+| Diseño de Software | 8 |
+| Paradigmas | 8 |
+| Aplicación y Servicios Web | 5 |
+| PHP | 4 |
+| Evaluaciones del ITM | 3 |
+| Cátedras | 2 |
+| Módulos del proyecto de aula y variantes | 26 |
+| **Total de sistemas levantables** | **64** |
+
+**Sesenta y cuatro proyectos independientes, cada uno con su propia red.**
+Contra un techo de unas **30**.
+
+Por eso el error no aparece por hacer algo mal: aparece porque **la suma da
+más de lo que cabe**. Y no es un caso raro de profesor — a un estudiante le
+pasa igual apenas acumula las cuatro versiones de su curso más las de otro.
+
+**Qué hacer, según el caso:**
+
+| Si usted… | Haga esto |
+|---|---|
+| Trabaja con dos o tres proyectos a la vez | **Camino 1**: baje el anterior antes de subir el siguiente. Le sobra espacio |
+| Necesita muchos encendidos al tiempo | **Camino 2**: amplíe el rango una vez, y olvídese |
+
+Ahí sí se amplía el rango. En Docker Desktop: **Settings → Docker Engine**, y
+al JSON que ya está se le agrega:
+
+```json
+{
+  "default-address-pools": [
+    { "base": "172.17.0.0/12", "size": 20 },
+    { "base": "10.100.0.0/16", "size": 24 }
+  ]
+}
+```
+
+**Qué le está diciendo a Docker:** «tome estos dos bloques grandes de
+direcciones y párta­los en redes pequeñas». Con `size: 20` sobre un `/12`
+salen **256** redes en vez de dieciséis; el segundo bloque agrega otras 256.
+
+| | Redes que caben |
+|---|---|
+| De fábrica | ~30 |
+| Con esa configuración | ~500 |
+
+> ⚠️ **Al guardar, Docker se reinicia y todos los contenedores se apagan.**
+> No se pierde nada —los datos están en los volúmenes— pero hay que volver a
+> levantar lo que estuviera corriendo. Hágalo cuando no esté en mitad de algo.
+
+### ¿Y qué cuesta tener tantos? ¿Dinero, memoria, procesador?
+
+**Dinero, no.** Docker Desktop es **gratuito** para uso personal, educativo,
+proyectos de código abierto y empresas de menos de 250 empleados con menos de
+10 millones de dólares de ingresos anuales. Se paga solo en organizaciones
+grandes y entidades gubernamentales. Un curso está cubierto, y **no se cobra
+por contenedor ni por red**.
+
+Lo que sí cuesta es **memoria y disco**. Estas son medidas reales de la
+máquina del profesor, con los proyectos del curso encima:
+
+| Recurso | Lo que había | Lo que usaba Docker |
+|---|---|---|
+| **RAM** | 32 GB | **14 GB** en 77 contenedores encendidos — quedaban 4 GB libres |
+| **Disco** | 952 GB | **141 GB**: 71 de imágenes, 16 de volúmenes y **53 de caché de compilación** |
+| **CPU** | 16 núcleos | Casi nada. Un contenedor **ocioso no consume procesador** |
+
+**La lectura:** el procesador no es el problema; la memoria y el disco sí.
+
+| Lo que ocupa… | Un proyecto **encendido** | Un proyecto **apagado con `down`** |
+|---|---|---|
+| RAM | Sí | **No** |
+| Puertos y red | Sí | **No** |
+| Disco (imágenes y volúmenes) | Sí | **Sí, igual** |
+
+Por eso apagar resuelve la memoria y las redes, pero **no el disco**: las
+imágenes y los volúmenes siguen ahí, y es lo correcto — por eso no se pierden
+los datos.
+
+### Cómo recuperar disco, sin perder trabajo
+
+```powershell
+docker system df
+```
+
+Muestra cuánto ocupa cada cosa y, en la columna **RECLAIMABLE**, cuánto se
+puede liberar. En la máquina del ejemplo eran **33 GB**.
+
+| Comando | Qué borra | ¿Peligroso? |
+|---|---|---|
+| `docker builder prune -f` | La **caché de compilación** | **No.** Solo hace que el próximo `--build` tarde un poco más |
+| `docker image prune -f` | Imágenes **sin usar** por ningún contenedor | No |
+| `docker volume prune -f` | Volúmenes **huérfanos**: sin contenedor que los use | **Cuidado.** Si bajó un proyecto con `down` y quería conservar su base, ese volumen está huérfano y **se borraría** |
+| `docker system prune -a` | Todo lo anterior **y todas las imágenes no usadas** | Libera mucho, y el siguiente arranque **vuelve a descargar todo** |
+
+> **El más rentable y el más inofensivo es el primero.** La caché de
+> compilación suele ser lo más grande y no contiene nada suyo: se vuelve a
+> generar sola.
+
+### ¿Qué máquina hace falta para tenerlos todos encendidos?
+
+**Ninguna, y esa es la respuesta honesta.**
+
+Los 64 proyectos serían unos 250 contenedores. A lo que consumen los del
+ejemplo, pasarían de **45 GB solo en contenedores** —y los de SQL Server
+pesan más que el promedio—. Habría que irse a 64 o 128 GB de memoria para
+algo **que nadie necesita**.
+
+**Nadie trabaja con sesenta y cuatro sistemas a la vez.** Se trabaja con dos
+o tres: el que está construyendo y el que usa de referencia. Lo demás se
+apaga.
+
+> La pregunta «¿qué máquina necesito para tener todo arriba?» casi siempre
+> es la pregunta equivocada. La buena es **«¿qué necesito tener arriba
+> ahora?»** — y la respuesta rara vez pasa de tres.
+
+
+### La regla de higiene que evita todo esto
+
+**Baje el proyecto anterior antes de levantar el siguiente.** Es la misma
+disciplina que evita el choque de puertos, y no cuesta nada:
+
+```powershell
+docker compose down     # en el que ya no usa
+docker compose up -d    # en el que va a usar
+```
+
+Un proyecto apagado con `down` **no ocupa red, ni puertos, ni memoria**, y sus
+datos siguen intactos. Volver a encenderlo es un comando.
+
+
 ## 6. Kubernetes (y por qué este curso NO lo necesita)
 
 Kubernetes (K8s) es el orquestador de contenedores **a escala de clúster**:
