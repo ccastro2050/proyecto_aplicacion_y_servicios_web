@@ -32,6 +32,40 @@ metadatos (qué comando arrancar, qué puerto expone).
 
 **Analogía:** la imagen es el **molde de la galleta**.
 
+### 2.1 El `Dockerfile`: la receta de la imagen
+
+Una imagen no aparece sola: **alguien escribe cómo se arma**. Ese «cómo»
+va en un archivo llamado `Dockerfile` (sin extensión), y este proyecto
+tiene uno: `./api_facturas`.
+
+Este es el de `api-facturas`, sin los comentarios para verlo de un vistazo:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /app
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1 ASPNETCORE_URLS=http://0.0.0.0:8036
+EXPOSE 8036
+CMD ["dotnet", "watch", "run", "--non-interactive", "--project", "ApiFacturas.csproj"]
+```
+
+Esto hace cada instrucción:
+
+| Instrucción | Qué hace | Por qué está aquí |
+|---|---|---|
+| `FROM mcr.microsoft.com/dotnet/sdk:10.0` | **De dónde se parte.** Toma una imagen ya hecha | Nadie arma un sistema desde cero: se parte de una que ya trae lo básico |
+| `WORKDIR /app` | La carpeta donde se trabaja dentro del contenedor | Para no repetir la ruta completa en cada instrucción siguiente |
+| `ENV DOTNET_USE_POLLING_FILE_WATCHER=1 ASPNE…` | Define **variables de entorno** que quedan en la imagen | El programa las lee al arrancar |
+| `EXPOSE 8036` | **Documenta** en qué puerto escucha el programa | No abre nada: quien publica el puerto es el `ports:` del compose |
+| `CMD ["dotnet", "watch", "run", "--non-inter…` | **El comando que se ejecuta al encender** el contenedor | Si ese proceso termina, el contenedor se apaga |
+
+**La diferencia entre `RUN` y `CMD`** es la que más se confunde:
+
+| | Cuándo corre | Cuántas veces |
+|---|---|---|
+| `RUN` | Al **construir** la imagen (`--build`) | Una sola vez, y queda guardado |
+| `CMD` | Al **encender** el contenedor | Cada vez que arranca |
+
+
 ## 3. Contenedor
 
 Un contenedor es una **instancia viva de una imagen**: un proceso corriendo
@@ -210,6 +244,122 @@ docker compose up -d --remove-orphans   # levanta lo declarado Y borra los huér
 
 Importante: borra los **contenedores** sobrantes, no los **volúmenes** —
 los datos de la BD siguen ahí (sección 4).
+
+### Las directivas del `docker-compose.yml`, una por una
+
+Estas son las palabras clave que usa el archivo de arriba, con lo que
+significan y qué pasaría si faltaran:
+
+| Directiva | Qué declara | Si no está |
+|---|---|---|
+| `services:` | La lista de contenedores del sistema. Cada nombre debajo es un servicio | No hay nada que levantar |
+| `image:` | **Usa** una imagen ya hecha, del registro público | Habría que construirla con `build:` |
+| `build:` | **Construye** la imagen con el `Dockerfile` de esa carpeta | Docker no sabría cómo armar su aplicación |
+| `environment:` | Variables que el programa lee al arrancar (claves, direcciones) | El programa arranca sin saber a qué base conectarse |
+| `volumes:` | Qué carpetas o volúmenes se montan dentro del contenedor | Los datos se pierden al apagar, y el código no se refresca |
+| `ports:` | `"puerto en su PC : puerto dentro del contenedor"` | El servicio corre pero **usted no lo puede abrir** desde el navegador |
+| `depends_on:` | En qué orden arrancan los servicios | Arrancan a la vez, y la API busca una base que todavía no existe |
+| `healthcheck:` | Cómo saber si el servicio **ya responde**, no solo si «existe» | `depends_on` esperaría a que arranque, no a que sirva |
+| `restart:` | Qué hacer si el proceso se muere | El contenedor se queda caído |
+| `volumes:` (al final, sin indentar) | Declara los volúmenes **nombrados** que usan los servicios | El volumen no existe y el servicio no arranca |
+
+**El nombre del servicio es también su dirección.** Cuando un servicio le
+habla a otro, lo llama por el nombre que tiene en este archivo: Docker crea
+una red interna y lo resuelve. Por eso no se usa `localhost` — **dentro de
+un contenedor, `localhost` es el contenedor mismo**.
+
+**Los dos números de `ports:` no son lo mismo.** El de la izquierda es el
+puerto de su computador; el de la derecha, el de adentro. Cambiar el de la
+izquierda no toca una línea de código.
+
+
+### `docker compose up -d --build`: un comando que hace siete cosas
+
+Esta es la parte que hace que valga la pena. **Un solo comando ejecuta toda
+esta secuencia**, en este orden:
+
+| # | Qué hace | El comando que se ahorra |
+|---|---|---|
+| 1 | **Lee** el `docker-compose.yml` y entiende el sistema completo | — |
+| 2 | **Descarga** las imágenes que usted no tiene todavía (las de `image:`) | `docker pull imagen` por cada una |
+| 3 | **Construye** las imágenes propias siguiendo su `Dockerfile` (las de `build:`) | `docker build -t nombre ./carpeta` por cada una |
+| 4 | **Crea la red** interna para que los contenedores se encuentren por su nombre | `docker network create red` |
+| 5 | **Crea los volúmenes** nombrados donde viven los datos | `docker volume create nombre` |
+| 6 | **Crea y enciende un contenedor por servicio**, con sus puertos, variables y volúmenes | `docker run -d --name … -p … -e … -v … imagen` por cada uno |
+| 7 | **Respeta el orden**: espera a que la base RESPONDA antes de encender la API | No tiene equivalente: habría que mirarlo a ojo |
+
+Y todo eso **es repetible**: quien lo corra mañana en otro computador obtiene
+exactamente lo mismo, porque la secuencia no está en la cabeza de nadie sino
+escrita en dos archivos — el `docker-compose.yml` y los `Dockerfile`.
+
+---
+
+### Lo mismo, pero escrito a mano
+
+**Sin compose**, para levantar este proyecto —que tiene **3 servicios**— hay
+que escribir esto, en este orden, cada vez:
+
+```powershell
+# 1. Crear la red, para que los contenedores se encuentren por su nombre
+docker network create proyecto_aplicacion_y_servicios_web_default
+
+# 2. sqlserver
+docker run -d --name sqlserver --network proyecto_aplicacion_y_servicios_web_default --restart unless-stopped `
+  -e "ACCEPT_EULA=Y" `
+  -e "MSSQL_SA_PASSWORD=Paradigmas123!" `
+  -e "MSSQL_PID=Developer" `
+  -v mssqldata:/var/opt/mssql `
+  -p 11467:1433 mcr.microsoft.com/mssql/server:2022-latest
+
+# 3. ESPERAR a que responda de verdad… mirándolo a ojo
+
+# 4. sqlserver-init
+docker run -d --name sqlserver-init --network proyecto_aplicacion_y_servicios_web_default --restart no --entrypoint /bin/bash `
+  -e "MSSQL_SA_PASSWORD=Paradigmas123!" `
+  -v "${PWD}/db:/scripts:ro" mcr.microsoft.com/mssql/server:2022-latest /scripts/init.sh
+
+# 5. Construir la imagen de api-facturas y encenderla
+docker build -t api-facturas ./api_facturas
+docker run -d --name api-facturas --network proyecto_aplicacion_y_servicios_web_default --restart unless-stopped `
+  -e "ConnectionStrings__SqlServer=Server=sqlserver,1433;Database=bdfacturas_sqlserver_local;User Id=sa;Password=Paradigmas123!;TrustServerCertificate=True;" `
+  -v "${PWD}/api_facturas:/app" `
+  -v /app/bin `
+  -v /app/obj `
+  -p 8036:8036 api-facturas
+
+```
+
+**5 comandos**, con sus flags, en un orden que no se puede equivocar.
+Con compose, todo eso es:
+
+```powershell
+docker compose up -d --build
+```
+
+**De dónde sale cada pedazo:**
+
+| Lo que antes era un flag | Ahora vive en |
+|---|---|
+| `docker build -t … ./carpeta` | `build:` del compose, y el **`Dockerfile`** de esa carpeta dice cómo |
+| `-p 8080:8080` | `ports:` |
+| `-e VARIABLE=valor` | `environment:` |
+| `-v origen:destino` | `volumes:` |
+| `--network …` | Compose la crea sola y mete a todos adentro |
+| `--name` | El nombre del servicio |
+| El orden y la espera | `depends_on:` + `healthcheck:` |
+
+Y las dos banderas del comando:
+
+| Bandera | Qué hace | Cuándo se usa |
+|---|---|---|
+| `-d` | Lo deja corriendo **en segundo plano** y le devuelve la terminal | Casi siempre. Sin ella la terminal queda pegada |
+| `--build` | **Reconstruye** las imágenes propias antes de encender | La primera vez, y cada vez que cambie un `Dockerfile` |
+
+> **Por eso el curso dice «un solo comando».** No es comodidad: es que el
+> sistema entero queda **escrito** en dos archivos en vez de vivir en la
+> memoria de quien lo levantó la primera vez. Cualquiera lo reproduce igual,
+> y eso es lo que hace que su proyecto sea entregable.
+
 
 ## 6. Kubernetes (y por qué este curso NO lo necesita)
 
