@@ -261,9 +261,8 @@ Todo funciona igual.
 descargas más alto a quien tiene la sesión abierta que a quien descarga de
 forma anónima.
 
-Lo que **no** conviene es ponerse a **crear** una cuenta cuando ya está
-trabajando. Son minutos gastados en algo que no hacía falta, y en una clase o
-en una entrega esos minutos se sienten.
+Dicho eso, **para este proyecto no hace falta**: ni para descargar las
+imágenes, ni para levantarlas, ni para trabajar.
 
 ### Lo único que sí es obligatorio
 
