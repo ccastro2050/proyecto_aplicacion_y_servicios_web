@@ -558,10 +558,46 @@ flowchart LR
 
 **Guía de lectura.** El navegador está **afuera** de las dos redes: entra por
 `localhost` y el **puerto publicado**. Los contenedores, en cambio, se hablan
-**por el nombre del servicio**, y solo dentro de su propia red: **no hay una sola línea entre las dos cajas azules, y eso no es un olvido del
-dibujo: es el dibujo diciendo la verdad.** La API de un proyecto no alcanza la
-base del otro, aunque estén en el mismo computador y aunque las dos bases se
-llamen `mariadb`.
+**por el nombre del servicio**, y ese nombre **solo existe dentro de su propia
+red**: no hay una sola línea entre las dos cajas azules, y no es un olvido del
+dibujo. Parado en `proyecto_php1`, el nombre `mariadb` es la base **de php1**;
+la de php2 no tiene ahí ningún nombre que valga, aunque se llame igual y aunque
+esté en el mismo computador.
+
+> **Dos precisiones, porque la frase fácil se pasa de larga.**
+>
+> **Dentro de un mismo proyecto, el front SÍ alcanza la base.** Todos los
+> contenedores del compose comparten la red, así que desde el front el nombre
+> `mariadb` resuelve y el puerto 3306 abre. Que el front no lo haga **no es
+> cosa de Docker**: Docker no lo impide. Lo impide la arquitectura por capas, y
+> se sostiene a pulso — y ayuda no darle al front ni las credenciales ni el
+> driver de la base, que es justo lo que hace el `docker-compose.yml` de este
+> repositorio.
+>
+> **Entre proyectos, lo que bloquea es el NOMBRE, no un muro.** El puerto
+> publicado es una puerta abierta a todo lo que alcance su computador, y otro
+> contenedor lo alcanza: desde `api-facturas` de este proyecto,
+> `http://host.docker.internal:PUERTO` llega a la API de otro proyecto y
+> responde, y el puerto que ese otro publique para su base abre igual. Lo que
+> aísla es el **DNS interno**; las puertas publicadas siguen siendo puertas.
+> (En Docker Desktop `host.docker.internal` existe solo; en un servidor Linux
+> hay que declararlo con `extra_hosts`.)
+
+Si quiere verlo en su máquina, con este proyecto levantado:
+
+```bash
+# ¿«api-facturas» alcanza la base de SU propio proyecto? Le pregunta por el nombre
+# al DNS interno de Docker. Si responde una IP, la red NO lo está impidiendo:
+# lo único que lo impide es la disciplina de no hacerlo.
+docker compose exec api-facturas getent hosts sqlserver
+
+# ¿Y algo de OTRO proyecto, por su puerta publicada? Cambie PUERTO por uno que
+# el otro compose publique. -s calla la barra de progreso, -o /dev/null tira el
+# cuerpo y -w "%{http_code}" imprime solo el código: si sale un número, del
+# otro lado contestaron.
+docker compose exec api-facturas curl -s -o /dev/null -w "%{http_code}\n" \
+    http://host.docker.internal:PUERTO/
+```
 
 > **Fíjese en la flecha que NO está.** Del front no sale ninguna línea hacia una
 > base de datos: ni hacia la del otro proyecto, ni hacia la suya. El front habla
