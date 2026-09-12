@@ -34,10 +34,21 @@ En la terminal integrada de VS Code (*Terminal → New Terminal*, PowerShell):
 > proyecto cuando en realidad está hablando con el viejo. Verifíquelo y
 > apáguelo primero:
 >
-> **Los dos comandos se copian y se pegan TAL CUAL.** No hay nada que
-> reemplazar — ni el `proyecto_`, ni el `$_`. Ese `$_` es de PowerShell y
-> significa «cada uno de los que vinieron por la tubería»; si usted lo
-> cambia por algo, deja de funcionar.
+> **En este curso los dos comandos se copian y se pegan tal cual.** Pero no
+> por la misma razón, y la diferencia importa:
+>
+> | | ¿Se cambia? |
+> |---|---|
+> | `$_` | **Nunca.** Es sintaxis de PowerShell — significa «cada uno de los que vinieron por la tubería». Si lo reemplaza por algo, deja de funcionar |
+> | `proyecto_` | **Aquí no**, porque todas las carpetas de estos cursos se llaman `proyecto_algo`. Pero es **texto de búsqueda**: en otro proyecto habría que poner el suyo |
+>
+> **O sea: este comando no es universal.** Funciona tal cual en estos cursos
+> porque Docker le pone al contenedor el nombre de la carpeta de la que
+> salió, y todas empiezan igual. Si mañana trabaja en una carpeta llamada
+> `taller_php`, el filtro sería `name=taller_`.
+>
+> **¿Y cómo sabría qué poner?** Corriendo `docker ps` sin filtro, mirando los
+> nombres de la columna `NAMES` y escogiendo el pedazo que tengan en común.
 >
 > **Paso 1 — VERIFICAR.** ¿Quedó algo del curso encendido?
 >
