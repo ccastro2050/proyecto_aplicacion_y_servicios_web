@@ -92,14 +92,26 @@ docs/spec_kit/
     └── …
 ```
 
-\* La `GUIA_IA<N>.md` es opcional pero recomendada: si van a construir con
-ayuda de IA, escriban el prompt y las reglas COMO en las guías del curso —
-la IA sigue la spec, no improvisa. Copien la estructura de los repos de
-clase y adáptenla; eso ES el ejercicio.
+\* La `GUIA_IA<N>.md` es **obligatoria en cada versión**, y lleva **los
+prompts que de verdad usaron** para generar el código a partir de la spec —el
+del chat, el del IDE agéntico, o los dos—, **con lo que tuvieron que
+corregirle a la IA**. Copien la estructura de las guías del curso y adáptenla;
+eso ES el ejercicio.
 
-**La spec es parte de la nota**: en cada versión se evalúa que el spec kit
-exista, esté completo y **coincida con lo construido** (si el código hace
-algo que la spec no dice, uno de los dos está mal).
+**No es burocracia: es el eslabón del medio.** El spec kit dice **qué**
+construir, el código es **lo construido**, y el prompt es **cómo se pasó de uno
+al otro**. Entregar los dos extremos y no el medio es entregar un resultado sin
+su procedimiento.
+
+**Y lo que más vale es la corrección.** Si pidieron algo y salió mal, lo que
+escribieron para arreglarlo dice más del equipo que el código final — y en la
+sustentación individual es lo que distingue a quien dirigió el trabajo de quien
+pegó una respuesta.
+
+**La spec y los prompts son parte de la nota**: en cada versión se evalúa que
+el spec kit exista, esté completo y **coincida con lo construido** (si el
+código hace algo que la spec no dice, uno de los dos está mal), y que los
+prompts que llevaron de la spec al código estén entregados.
 
 ## 4. Los dos repositorios (y las reglas de GitHub)
 
