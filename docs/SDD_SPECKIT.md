@@ -33,7 +33,7 @@
 >    y en un grafo de dependencias (qué depende de qué, qué puede ir en
 >    paralelo), con la disciplina de escribir la prueba ANTES del código.
 > 5. **El código pasa a ser un subproducto:** si toda la lógica vive en
->    los `.md`, cambiar de stack es regenerar — lo que vale oro es la
+>    los `.md`, cambiar de stack es regenerar — lo que de verdad vale es la
 >    especificación. La competencia clave del profesional deja de ser
 >    memorizar sintaxis y pasa a ser **claridad de pensamiento
 >    estructural**: definir arquitecturas y comunicarse sin ambigüedades.
