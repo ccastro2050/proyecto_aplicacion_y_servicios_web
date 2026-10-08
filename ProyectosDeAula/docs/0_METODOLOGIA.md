@@ -9,6 +9,17 @@
 > [Mapa de Conocimiento](modulo_mapa_conocimiento.md) ·
 > [Proyecto Completo](proyecto_completo.md).
 
+> ### Y lo que más sube y baja la nota no es el código: es poder explicarlo
+>
+> Desde la **v2**, **4 de los 20 puntos de cada versión —el 20 %— son
+> INTERPRETABILIDAD**: el profesor abre un archivo que **él** elige y usted lo
+> cuenta en voz alta. Qué hace, por qué está así, qué pasa si falla y qué
+> cambiaría.
+>
+> **Un equipo puede pasar todos los criterios técnicos y sacar 2.9 ahí.** Es
+> el único criterio que **no se puede delegar** —ni a un compañero ni a una
+> IA—, y está desarrollado en la §2.2.
+
 ---
 
 ## 1. El método: SDD por versiones (igual que en clase)
@@ -42,6 +53,10 @@ se reabre. Estudien el `docs/spec_kit/` de esos repos: ese es el molde.
 5. **Regresión obligatoria**: al cerrar la vN, los criterios de TODAS las
    versiones anteriores deben seguir pasando (las versiones son
    acumulativas).
+6. **Lo que usted entrega, usted lo explica**: desde la v2 se califica en voz
+   alta, sobre el archivo que el profesor elija, y **cuenta el 20 % de la
+   versión** (§2.2). Código que nadie del equipo puede explicar es código que
+   no se entregó: se recibió.
 
 ## 2. Las 4 versiones del proyecto de aula
 
@@ -72,6 +87,89 @@ grupo la fija el profesor en clase (anótela en el espacio en blanco).
 > lo respaldan (frecuentes, descriptivos, propios). Una rama sin commits —
 > o con un solo commit gigante la noche anterior — es una sustentación
 > sin evidencia.
+
+**Y así se reparten los 20 puntos de cada versión**, para que nadie se entere
+el día de la entrega:
+
+| | Puntos | Quién responde |
+|---|---|---|
+| **Entrega en equipo** | **10** | El equipo: lo que el sistema hace, contra los criterios de aceptación |
+| **Sustentación individual** | **10**, y de esos **4 son INTERPRETABILIDAD** (desde la v2) | **Cada uno por separado**, sobre lo que entregó |
+
+> **Los 4 puntos de interpretabilidad salen de los 10 individuales, no de los
+> del equipo**, y es a propósito: si salieran de los del equipo, uno que
+> entienda salvaría a cuatro que no.
+
+### 2.2 La interpretabilidad — 4 de los 20 puntos de cada versión
+
+Todo lo demás de la rúbrica se comprueba **corriendo el sistema**. Esto no: se
+comprueba **hablando**, y es lo que separa haber construido de haber recibido.
+
+| | |
+|---|---|
+| **Desde cuándo** | **La v2.** En la v1 se está aprendiendo a mover las piezas; en la v2 ya hay **código heredado** y decisiones que alguien tomó, y ahí se ve quién entendió |
+| **Cuánto vale** | **4 de los 20 puntos de la versión**, o sea el **20 %** de la nota, en **todas** las versiones de la v2 en adelante |
+| **De dónde salen** | De los **10 individuales**. No de los del equipo |
+| **Cómo** | El profesor abre **un archivo del repositorio, elegido por él**, y le pide a quien lo entregó que lo cuente |
+| **Dónde** | **En voz alta y presencial.** No se recibe por escrito |
+| **A quién** | A **cada integrante por separado**, sobre **lo que ese integrante entregó** |
+
+**Y en puntos, para que no haya dudas:**
+
+| | |
+|---|---|
+| Cada versión vale **20 %** del semestre | 10 % individual + 10 % en equipo |
+| La interpretabilidad es **20 % de esa versión** | **4 de los 20 puntos** |
+| Y es **individual**, no de equipo | esos 4 puntos salen de **sus 10 puntos individuales** |
+| Son **tres versiones** con interpretabilidad (v2, v3 y v4) | **12 % de la nota final del semestre** |
+
+> **En la versión 1 ese 20 % no se evalúa** —se está aprendiendo a mover las
+> piezas— y se reparte entre los demás criterios.
+>
+> **Por qué pesa tanto, dicho sin rodeos:** es el único criterio que **no se
+> puede delegar**. La API puede funcionar porque una IA la escribió bien; el
+> front puede verse bien por lo mismo. **Explicar por qué está así solo lo
+> puede hacer quien entendió.** Un equipo puede entregar un sistema perfecto y
+> sacar 2.9 en este criterio — y es correcto que así sea.
+
+**Las cuatro preguntas son siempre las mismas**, así que no hay sorpresa:
+
+| | Qué se pregunta |
+|---|---|
+| **Qué hace** | Cuénteme este archivo sin leérmelo línea por línea |
+| **Por qué así** | ¿Por qué esta decisión y no la otra? ¿Qué se gana y qué se pierde? |
+| **Qué pasa si falla** | Si esto se cae o la base de datos rechaza, ¿qué recibe quien llamó y qué ve la persona en la pantalla? |
+| **Qué cambiaría** | Si mañana hay que agregar X, ¿dónde se toca? ¿Y dónde NO? |
+
+#### Comentar no es entender, y aquí está la diferencia
+
+La guía de IA exige que **la IA comente lo que genera**, y eso ayuda. Pero:
+
+> **El comentario FACILITA la interpretabilidad; no es la nota.** Un
+> comentario se recita sin entenderlo. Y hay algo peor: **puede estar
+> equivocado** —la IA comenta lo que *cree* que hizo—. Lo que se califica es
+> que usted pueda decir **si es cierto**.
+
+Un comentario que sirve dice **por qué**, no **qué**:
+
+| Comentario que no vale nada | Comentario que sí |
+|---|---|
+| `// recorre la lista de productos` | `// el detalle viaja en un solo envío y el procedimiento lo abre: UN viaje a la base de datos y UNA transacción — si fuera un INSERT por renglón, un fallo a mitad dejaría media factura` |
+| `// valida el stock` | `// el stock lo valida el DISPARADOR y no el servicio, porque también tiene que valer para quien entre por el administrador de la base de datos` |
+
+> **La prueba de fuego de un comentario:** tápele el código y pregúntese si el
+> comentario sigue diciendo algo. Si solo repite el nombre del método, no
+> aporta; si dice la razón, usted acaba de dejarle escrito a su propio futuro
+> —y al profesor— lo que estaba pensando.
+
+#### Y lo que esto implica para cómo se trabaja con IA
+
+| | |
+|---|---|
+| **Se puede usar IA** | Sí, y está dicho en la guía. Nadie va a preguntar quién escribió la línea |
+| **Lo que NO se puede** | Entregar algo que usted no pueda contar. Si la IA lo escribió y usted no lo entendió, **todavía no está entregado**: está pegado |
+| **La consecuencia práctica** | Pídale a la IA que **explique** lo que genera, y después **compruébelo**: haga que falle, mire el error, bórrele una línea y vea qué se rompe. Eso es lo que no se puede recitar |
+
 
 ## 3. El spec kit que cada equipo ESCRIBE (por versión)
 
@@ -337,10 +435,16 @@ según la calidad de lo entregado**)** o **No cumple (de 0 a 2.9)**.
 | **Dashboard y consultas (v4)** | 10 consultas de 4+ tablas con gráficos claros | Menos de 10 consultas, consultas de menos de 4 tablas, o sin dashboard |
 | **Imagen corporativa y responsive (v4)** | **Existe un manual de marca** —propio o el del ejemplo— y la pantalla lo cumple: los colores y las tipografías salen de él, no de un gusto; todo responsive | No hay manual, o lo hay y la pantalla no lo respeta, o no es responsive |
 | **Publicación (v4)** | Publicado, funcional, con secretos en variables de entorno del servidor | No publicado o con secretos expuestos |
+| **INTERPRETABILIDAD (v2+)** · *4 de los 20 puntos* | Cada integrante **cuenta en voz alta** el archivo que el profesor elija de lo que ÉL entregó: qué hace, por qué así, qué pasa si falla y qué cambiaría. Y los comentarios del código dicen **por qué**, no qué | No puede explicar lo que entregó, o lo recita; los comentarios repiten el nombre del método —o están equivocados y no se dio cuenta— (§2.2) |
 
 Dentro de la franja "Cumple", la nota (3.0 a 5.0) refleja la calidad:
 completitud, solidez ante errores, claridad del código y de la spec, y la
 sustentación individual.
+
+> **Y una advertencia sobre la fila de interpretabilidad, porque es la que más
+> sorprende:** un equipo puede tener los otros criterios en verde y esa en
+> 2.9. No es un descuido de la rúbrica —es el único criterio que no se puede
+> delegar—. Ver la §2.2.
 
 **Entregar en cada versión:** enlaces a los 2 repos (con el tag `vN`
 puesto) + evidencia del quickstart de su spec pasando. En la v4, además:
